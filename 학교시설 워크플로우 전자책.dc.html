@@ -31,7 +31,9 @@ a:hover{color:#164a75}
 
 <div style="min-height:{{ shellH }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:14px">
 
-  <div style="position:relative;width:{{ bookW }};height:{{ bookH }};max-width:100%;flex:0 0 auto;overflow:{{ bookOv }};transform:scale({{ scale }});transform-origin:center center;display:flex;flex-direction:{{ bookDir }};background:var(--bg);box-shadow:0 24px 60px rgba(0,20,40,.28);border:1px solid var(--divider)">
+  <div style="position:relative;width:{{ bookW }};height:{{ bookH }};max-width:{{ bookMax }};flex:0 0 auto;overflow:{{ bookOv }};transform:scale({{ scale }});transform-origin:center center;display:flex;flex-direction:{{ bookDir }};background:var(--bg);box-shadow:0 24px 60px rgba(0,20,40,.28);border:1px solid var(--divider)">
+
+    <a href="학교시설 워크플로우 인트로.dc.html" aria-label="닫기 · 홈으로" style="position:absolute;right:0;top:0;z-index:30;display:flex;align-items:center;gap:8px;padding:12px 18px;font-family:var(--head);font-size:12px;font-weight:600;letter-spacing:.12em;color:var(--faint);background:var(--bg);border-left:1px solid var(--divider);border-bottom:1px solid var(--divider)" style-hover="color:#fff;background:var(--a900)">끄기 ✕</a>
 
     <button type="button" onClick="{{ prev }}" aria-label="이전 쪽" style="position:absolute;left:0;bottom:0;width:50%;height:96px;z-index:20;border:0;background:transparent;cursor:w-resize;display:{{ zoneDisp }};align-items:flex-end;justify-content:flex-start;padding:0 0 16px 38px;font:inherit;font-family:var(--head);font-size:12px;letter-spacing:.14em;color:transparent" style-hover="color:var(--a700);background:linear-gradient(to left, transparent, rgba(211,231,250,.55))">← 이전 쪽</button>
     <button type="button" onClick="{{ next }}" aria-label="다음 쪽" style="position:absolute;right:0;bottom:0;width:50%;height:96px;z-index:20;border:0;background:transparent;cursor:e-resize;display:{{ zoneDisp }};align-items:flex-end;justify-content:flex-end;padding:0 38px 16px 0;font:inherit;font-family:var(--head);font-size:12px;letter-spacing:.14em;color:transparent" style-hover="color:var(--a700);background:linear-gradient(to right, transparent, rgba(211,231,250,.55))">다음 쪽 →</button>
@@ -163,6 +165,7 @@ a:hover{color:#164a75}
     <input type="range" min="0" max="{{ maxSpread }}" step="1" value="{{ spread }}" onChange="{{ onSlide }}" style="width:min(280px,38vw);accent-color:#164a75">
     <button type="button" onClick="{{ next }}" style="font:inherit;font-size:13px;font-weight:700;color:var(--muted);background:#fff;border:1px solid var(--divider);padding:9px 18px;cursor:pointer" style-hover="color:#fff;background:var(--a700);border-color:var(--a700)">다음 →</button>
     <span style="font-family:var(--head);font-size:12px;letter-spacing:.12em;color:rgba(0,0,0,.6);min-width:110px;text-align:right">{{ counter }}</span>
+    <button type="button" onClick="{{ toggleSound }}" aria-label="{{ soundLabel }}" style="font:inherit;font-size:12px;font-weight:600;color:var(--muted);background:#fff;border:1px solid var(--divider);padding:9px 13px;cursor:pointer" style-hover="color:#fff;background:var(--a700);border-color:var(--a700)">{{ soundLabel }}</button>
   </div>
 
 </div>
@@ -178,7 +181,7 @@ const KIND = {
 const BOOK_W = 1360, BOOK_H = 840;
 
 class Component extends DCLogic {
-  state = { spread: 0, ready: false, scale: 1, turn: 0, narrow: (typeof window !== 'undefined' && window.innerWidth < 860) };
+  state = { spread: 0, ready: false, scale: 1, turn: 0, muted: false, narrow: (typeof window !== 'undefined' && window.innerWidth < 860) };
 
   componentDidMount() {
     this._t = setInterval(() => {
@@ -206,14 +209,47 @@ class Component extends DCLogic {
     document.removeEventListener('keydown', this._key);
   }
 
+  flip() {
+    if (this.state.muted) return;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!this._ac) this._ac = new AC();
+      const ac = this._ac;
+      if (ac.state === 'suspended') ac.resume();
+      const dur = 0.26, sr = ac.sampleRate, len = Math.floor(sr * dur);
+      const buf = ac.createBuffer(1, len, sr), d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) {
+        const t = i / len;
+        // two short rustles: the sheet lifting, then settling
+        const env = Math.exp(-9 * t) * (0.55 + 0.45 * Math.sin(Math.PI * Math.min(1, t * 2.6)));
+        d[i] = (Math.random() * 2 - 1) * env;
+      }
+      const src = ac.createBufferSource(); src.buffer = buf;
+      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2600; bp.Q.value = 0.7;
+      const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 900;
+      const g = ac.createGain(); g.gain.value = 0.16;
+      const now = ac.currentTime;
+      bp.frequency.setValueAtTime(1500, now);
+      bp.frequency.exponentialRampToValueAtTime(4200, now + dur);
+      g.gain.setValueAtTime(0.001, now);
+      g.gain.exponentialRampToValueAtTime(0.16, now + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+      src.connect(hp); hp.connect(bp); bp.connect(g); g.connect(ac.destination);
+      src.start(now); src.stop(now + dur);
+    } catch (e) {}
+  }
+
   max() { return (window.WF_ORDER || []).length; }
   go(d) {
     this.setState(s => {
       const n = Math.min(this.max(), Math.max(0, s.spread + d));
-      return n === s.spread ? null : { spread: n, turn: s.turn + 1 };
+      if (n === s.spread) return null;
+      this.flip();
+      return { spread: n, turn: s.turn + 1 };
     });
   }
-  jump(i) { this.setState(s => ({ spread: i, turn: s.turn + 1 })); }
+  jump(i) { this.setState(s => { if (i !== s.spread) this.flip(); return { spread: i, turn: s.turn + 1 }; }); }
 
   renderVals() {
     const order = window.WF_ORDER || [], NM = window.WF_BOARDNM || {}, BS = window.WF_BOARDS || {};
@@ -221,12 +257,16 @@ class Component extends DCLogic {
     const nw = this.state.narrow;
     const base = {
       scale: this.state.scale, spread: sp, maxSpread: Math.max(1, order.length),
-      bookW: nw ? '100%' : '1360px', bookH: nw ? 'auto' : '840px',
+      bookW: nw ? '100%' : '1360px', bookH: nw ? 'auto' : '840px', bookMax: nw ? '100%' : 'none',
       bookDir: nw ? 'column' : 'row', bookOv: nw ? 'visible' : 'hidden',
       shellH: nw ? 'auto' : '100vh', zoneDisp: nw ? 'none' : 'flex',
       pageDivider: nw ? '0' : '1px', pageDividerB: nw ? '1px' : '0',
       anim: 'wfTurn .34s cubic-bezier(.2,.8,.3,1) ' + this.state.turn % 2 + 's',
       prev: () => this.go(-1), next: () => this.go(1),
+      muted: this.state.muted,
+      soundLabel: this.state.muted ? '소리 꺼짐' : '소리 켜짐',
+      soundIcon: this.state.muted ? '🔇' : '🔊',
+      toggleSound: () => this.setState(s => ({ muted: !s.muted })),
       onSlide: (e) => this.jump(parseInt(e.target.value, 10)),
       counter: sp === 0 ? '표지 · 목차' : (sp + ' / ' + order.length),
       isCover: sp === 0, isBoard: sp > 0,

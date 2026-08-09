@@ -33,6 +33,7 @@ a:hover{color:#164a75}
   <div style="display:flex;align-items:center;gap:12px;padding:20px 40px;border-bottom:1px solid var(--divider)">
     <span style="font-family:var(--head);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)">School Bible / Workflow Board</span>
     <span style="margin-left:auto;font-family:var(--head);font-size:12px;letter-spacing:.1em;color:var(--faint)">26 BOARDS · 47 SHEETS</span>
+    <button type="button" onClick="{{ toggleSound }}" aria-label="{{ soundLabel }}" style="font:inherit;font-size:11.5px;font-weight:600;color:var(--muted);background:transparent;border:1px solid var(--divider);padding:5px 11px;cursor:pointer" style-hover="color:#fff;background:var(--a700);border-color:var(--a700)">{{ soundLabel }}</button>
   </div>
 
   <div style="flex:1 1 auto;display:grid;grid-template-columns:{{ cols }};align-items:stretch">
@@ -43,8 +44,8 @@ a:hover{color:#164a75}
       <div style="font-size:16px;line-height:1.65;color:var(--muted);margin-top:20px;max-width:50ch;text-wrap:pretty">기획부터 준공·사용승인까지, 담당자가 실제로 밟는 절차를 단계와 담당 주체로 갈라 놓은 보드입니다. 설계변경·공기연장·인허가·안전사고 등 26개 업무를 같은 문법으로 읽습니다.</div>
 
       <div style="display:flex;gap:12px;align-items:center;margin-top:34px;flex-wrap:wrap">
-        <a href="학교시설 워크플로우 보드.dc.html" style="display:inline-flex;align-items:center;gap:10px;font-size:15px;font-weight:700;color:#fff;background:var(--a900);border:2px solid var(--a900);padding:14px 26px" style-hover="background:var(--a700);border-color:var(--a700)">보드 열기 <span style="font-family:var(--head);letter-spacing:.1em">→</span></a>
-        <a href="학교시설 워크플로우 전자책.dc.html" style="display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:700;color:var(--a700);border:2px solid var(--a700);padding:13px 22px" style-hover="color:#fff;background:var(--a700)">전자책으로 읽기 <span style="font-family:var(--head);letter-spacing:.1em">→</span></a>
+        <a href="학교시설 워크플로우 보드.dc.html" onClick="{{ tapBtn }}" style="display:inline-flex;align-items:center;gap:10px;font-size:15px;font-weight:700;color:#fff;background:var(--a900);border:2px solid var(--a900);padding:14px 26px" style-hover="background:var(--a700);border-color:var(--a700)">보드 열기 <span style="font-family:var(--head);letter-spacing:.1em">→</span></a>
+        <a href="학교시설 워크플로우 전자책.dc.html" onClick="{{ tapBtn }}" style="display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:700;color:var(--a700);border:2px solid var(--a700);padding:13px 22px" style-hover="color:#fff;background:var(--a700)">전자책으로 읽기 <span style="font-family:var(--head);letter-spacing:.1em">→</span></a>
         <a href="학교시설 워크플로우 보드.dc.html" style="display:inline-flex;align-items:center;font-size:14px;font-weight:600;color:var(--muted);border:1px solid var(--divider);padding:14px 20px" style-hover="background:var(--key-bg)">세부 워크플로우 47장</a>
       </div>
 
@@ -85,7 +86,7 @@ a:hover{color:#164a75}
 
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:7px 6px;margin-top:14px">
         <sc-for list="{{ boards }}" as="b" hint-placeholder-count="26">
-          <a href="{{ b.href }}" style="display:block;color:var(--text);transition:transform .25s cubic-bezier(.2,.8,.3,1),filter .25s" style-hover="transform:translateY(-3px);filter:drop-shadow(0 5px 10px rgba(13,51,80,.28))">
+          <a href="{{ b.href }}" onMouseEnter="{{ b.enter }}" onClick="{{ b.tap }}" style="display:block;color:var(--text);transition:transform .25s cubic-bezier(.2,.8,.3,1),filter .25s" style-hover="transform:translateY(-3px);filter:drop-shadow(0 5px 10px rgba(13,51,80,.28))">
             <div style="display:flex;align-items:flex-end;height:6px">
               <div style="width:{{ b.tabW }};height:6px;background:{{ b.tab }};border:1px solid {{ b.line }};border-bottom:0;clip-path:polygon(0 0, calc(100% - 5px) 0, 100% 100%, 0 100%)"></div>
             </div>
@@ -204,7 +205,7 @@ a:hover{color:#164a75}
     </div>
 
     <div style="display:flex;gap:12px;align-items:center;margin-top:34px;flex-wrap:wrap">
-      <a href="학교시설 워크플로우 보드.dc.html" style="display:inline-flex;align-items:center;gap:10px;font-size:15px;font-weight:700;color:#fff;background:var(--a900);border:2px solid var(--a900);padding:14px 26px" style-hover="background:var(--a700);border-color:var(--a700)">보드 열기 <span style="font-family:var(--head);letter-spacing:.1em">→</span></a>
+      <a href="학교시설 워크플로우 보드.dc.html" onClick="{{ tapBtn }}" style="display:inline-flex;align-items:center;gap:10px;font-size:15px;font-weight:700;color:#fff;background:var(--a900);border:2px solid var(--a900);padding:14px 26px" style-hover="background:var(--a700);border-color:var(--a700)">보드 열기 <span style="font-family:var(--head);letter-spacing:.1em">→</span></a>
       <span style="font-size:12.5px;color:var(--faint)">보드 안에서 절차·법령·서류를 전체 검색할 수 있습니다.</span>
     </div>
   </div>
@@ -229,7 +230,7 @@ const KIND = {
 const FALLBACK = [['S0','기획·사전심의'],['S1','사전절차·계획수립'],['S2','설계'],['S3','발주'],['S4','착공·시공'],['S5','준공·사용승인']];
 
 class Component extends DCLogic {
-  state = { ready: false, narrow: (typeof window !== 'undefined' && window.innerWidth < 880) };
+  state = { ready: false, muted: false, narrow: (typeof window !== 'undefined' && window.innerWidth < 880) };
   componentDidMount() {
     this._rs = () => {
       const n = window.innerWidth < 880;
@@ -241,6 +242,37 @@ class Component extends DCLogic {
     }, 60);
   }
   componentWillUnmount() { clearInterval(this._t); window.removeEventListener('resize', this._rs); }
+
+  sfx(kind) {
+    if (this.state.muted) return;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!this._ac) this._ac = new AC();
+      const ac = this._ac;
+      if (ac.state === 'suspended') ac.resume();
+      const now = ac.currentTime;
+      const soft = kind === 'hover';
+      const dur = soft ? 0.07 : 0.22;
+      const sr = ac.sampleRate, len = Math.floor(sr * dur);
+      const buf = ac.createBuffer(1, len, sr), d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) {
+        const t = i / len;
+        d[i] = (Math.random() * 2 - 1) * Math.exp(-(soft ? 22 : 10) * t);
+      }
+      const src = ac.createBufferSource(); src.buffer = buf;
+      const bp = ac.createBiquadFilter(); bp.type = 'bandpass';
+      bp.frequency.setValueAtTime(soft ? 3200 : 1600, now);
+      bp.Q.value = soft ? 1.4 : 0.7;
+      if (!soft) bp.frequency.exponentialRampToValueAtTime(4000, now + dur);
+      const g = ac.createGain();
+      g.gain.setValueAtTime(0.001, now);
+      g.gain.exponentialRampToValueAtTime(soft ? 0.05 : 0.14, now + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+      src.connect(bp); bp.connect(g); g.connect(ac.destination);
+      src.start(now); src.stop(now + dur);
+    } catch (e) {}
+  }
 
   renderVals() {
     const NM = window.WF_BOARDNM || {};
@@ -256,17 +288,24 @@ class Component extends DCLogic {
       idx: 'B' + String(i + 1).padStart(2, '0'),
       tags: (((window.WF_TAGS || {})[k]) || []).slice(0, 2).map(t => '#' + t).join(' '),
       tabW: TABW[i % TABW.length],
+      enter: () => this.sfx('hover'),
+      tap: () => this.sfx('click'),
       n: ((window.WF_BOARDS && window.WF_BOARDS[k] && window.WF_BOARDS[k].NODES) || []).length,
       href: '학교시설 워크플로우 보드.dc.html'
     }, SHADE[i % SHADE.length]));
     const cols = this.state.narrow ? '1fr' : 'minmax(360px,6fr) minmax(380px,6fr)';
+    const sound = {
+      soundLabel: this.state.muted ? '소리 꺼짐' : '소리 켜짐',
+      toggleSound: () => this.setState(s => ({ muted: !s.muted })),
+      tapBtn: () => this.sfx('click')
+    };
     const B = window.WF_BOARDS && window.WF_BOARDS.cycle;
-    if (!B) return {
+    if (!B) return Object.assign({}, sound, {
       cols, boards,
       lanes: ['발주청 담당팀','설계사','건설사업관리(감리)자','시공사','심의·검토·외부기관'],
       rows: FALLBACK.map(s => ({ k: s[0], n: s[1], cells: [0,1,2,3,4].map(() => ({ nodes: [] })) }))
-    };
-    return {
+    });
+    return Object.assign({}, sound, {
       cols, boards,
       lanes: (B.laneHead || []).map(l => l[0]),
       rows: B.STAGES.map((st, si) => ({
@@ -275,7 +314,7 @@ class Component extends DCLogic {
           nodes: B.NODES.filter(n => n.s === si && n.l === ln).map(n => Object.assign({ id: n.id }, KIND[n.k] || KIND.key))
         }))
       }))
-    };
+    });
   }
 }
 
