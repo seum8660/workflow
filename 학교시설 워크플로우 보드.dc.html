@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="data/wf_boards.js"></script>
+<script src="data/wf_tags.js"></script>
+<style>
+[data-mode]{
+  --bg:#fff; --panel:#fff; --text:#000000; --divider:rgba(0,0,0,.52);
+  --muted:rgba(0,0,0,.92); --faint:rgba(0,0,0,.80);
+  --a300:#3f7db8; --a500:#164a75; --a700:#0d3350; --a900:#000c14;
+  --key-bg:#d3e7fa; --bot-bg:#aacff2; --chip:#fff;
+  --edge:#123f66; --edge-back:#3b4045; --dot:#00417f;
+  --hdbg:#000c14; --hdfg:#ffffff; --hdsub:rgba(255,255,255,1);
+  --post-bg:rgba(128,132,136,.16);
+  --head:'Barlow Condensed','Pretendard',system-ui,sans-serif;
+}
+[data-mode="dark"]{
+  --bg:#000000; --panel:#0d1116; --text:#ffffff; --divider:rgba(255,255,255,.52);
+  --muted:rgba(255,255,255,.94); --faint:rgba(255,255,255,.82);
+  --a300:#6a9ac4; --a500:#bfdcfa; --a700:#dcefff; --a900:#f4faff;
+  --key-bg:#12243a; --bot-bg:#1f4066; --chip:#0d1116;
+  --edge:#bfdcfa; --edge-back:#b6bfc7; --dot:#bfdcfa;
+  --hdbg:#123a5c; --hdfg:#ffffff; --hdsub:rgba(255,255,255,1);
+  --post-bg:rgba(180,186,192,.16);
+}
+[data-mode="warm"]{
+  --bg:#faf4e4; --panel:#fffef8; --text:#0f0b02; --divider:rgba(15,11,2,.54);
+  --muted:rgba(15,11,2,.92); --faint:rgba(15,11,2,.80);
+  --a300:#b98f45; --a500:#6d4810; --a700:#4f3309; --a900:#1b1103;
+  --key-bg:#ead7b2; --bot-bg:#d9c393; --chip:#fffef8;
+  --edge:#6d4810; --edge-back:#5f5646; --dot:#4f3309;
+  --hdbg:#1b1103; --hdfg:#fffef8; --hdsub:rgba(255,254,248,1);
+  --post-bg:rgba(109,72,16,.16);
+}
+body{margin:0;font-family:'Pretendard','Malgun Gothic',system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;word-break:keep-all}
+a{color:#0d3350;text-decoration:none}
+a:hover{color:#164a75}
+@keyframes wfPop{0%{transform:scale(1)}45%{transform:scale(1.045)}100%{transform:scale(1.02)}}
+@keyframes wfRing{0%{box-shadow:0 0 0 0 rgba(89,128,166,.38)}70%{box-shadow:0 0 0 12px rgba(89,128,166,0)}100%{box-shadow:0 0 0 0 rgba(89,128,166,0)}}
+@keyframes wfDash{to{stroke-dashoffset:-24}}
+</style>
+</helmet>
+
+<div data-mode="{{ mode }}" style="background:var(--bg);color:var(--text);min-height:100vh">
+<div style="padding:clamp(14px,3vw,22px) clamp(12px,3vw,28px) 44px;max-width:1680px;margin:0 auto">
+
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid var(--divider)">
+    <span style="font-family:var(--head);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)">School Bible / Workflow Board</span>
+    <a href="학교시설 워크플로우 인트로.dc.html" style="font-size:12px;font-weight:600;color:var(--muted);border:1px solid var(--divider);padding:6px 12px" style-hover="color:#fff;background:var(--a700)">← 인트로</a>
+    <div style="position:relative;flex:0 1 300px;min-width:200px">
+      <input type="text" placeholder="절차 · 법령 · 서류 검색 (전체 보드)" autocomplete="off" value="{{ q }}" onChange="{{ onQuery }}" onKeyDown="{{ onKey }}" style="font:inherit;font-size:12.5px;width:100%;padding:7px 30px 7px 11px;background:var(--panel);color:var(--text);border:2px solid var(--a900);outline:none;box-sizing:border-box">
+      <button type="button" onClick="{{ clearQ }}" aria-label="검색어 지우기" style="position:absolute;right:2px;top:1px;bottom:1px;width:26px;font:inherit;font-size:13px;color:var(--faint);background:transparent;border:0;cursor:pointer;display:{{ xDisplay }}">✕</button>
+      <div style="position:absolute;z-index:120;left:0;right:0;top:calc(100% + 4px);max-height:340px;overflow:auto;background:var(--panel);border:1px solid var(--divider);box-shadow:0 12px 30px rgba(0,0,0,.16);display:{{ resDisplay }}">
+        <sc-for list="{{ results }}" as="r" hint-placeholder-count="0">
+          <button type="button" onClick="{{ r.go }}" style="display:block;width:100%;text-align:left;font:inherit;background:transparent;color:var(--text);border:0;border-top:1px solid var(--divider);padding:8px 11px;cursor:pointer" style-hover="background:var(--key-bg)">
+            <span style="display:flex;gap:7px;align-items:center;font-size:10.5px;color:var(--faint);font-family:var(--head);letter-spacing:.06em">
+              <span>{{ r.id }}</span><span>{{ r.board }}</span>
+            </span>
+            <span style="display:block;font-size:12px;line-height:1.4;margin-top:2px">{{ r.pre }}<mark style="background:var(--bot-bg);color:var(--text)">{{ r.mid }}</mark>{{ r.post }}</span>
+          </button>
+        </sc-for>
+        <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:9px 11px;font-size:12px;color:var(--faint)">일치하는 절차가 없습니다.</div>
+        </sc-if>
+      </div>
+    </div>
+    <div style="margin-left:auto;display:flex;border:1px solid var(--divider)">
+      <sc-for list="{{ modes }}" as="m" hint-placeholder-count="3">
+        <button type="button" onClick="{{ m.go }}" style="font:inherit;font-size:12px;font-weight:600;padding:6px 13px;border:0;border-left:1px solid var(--divider);cursor:pointer;background:{{ m.bg }};color:{{ m.fg }}">{{ m.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:flex-start;gap:{{ mainGap }};flex-direction:{{ mainDir }};margin-top:16px">
+
+    <div style="position:{{ sidePos }};top:16px;flex:{{ sideFlex }};width:100%;align-self:flex-start;max-height:{{ sideMax }};overflow:auto;-webkit-overflow-scrolling:touch">
+      <div style="display:flex;flex-direction:{{ tabsDir }};border:1px solid var(--divider);min-width:{{ tabsMin }}">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="26">
+          <button type="button" onClick="{{ t.go }}" style="flex:0 0 auto;white-space:{{ tabWrap }};font:inherit;font-size:12.5px;font-weight:600;border:0;border-top:1px solid var(--divider);border-left:1px solid var(--divider);padding:11px 14px;cursor:pointer;text-align:left;line-height:1.35;background:{{ t.bg }};color:{{ t.fg }};box-shadow:{{ t.mark }}" style-hover="color:#fff;background:var(--a700)">{{ t.name }}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="flex:1 1 auto;min-width:0">
+
+      <div style="display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;padding:0 0 20px;border-bottom:1px solid var(--divider)">
+        <div>
+          <div style="font-family:var(--head);font-size:12px;font-weight:500;letter-spacing:.14em;color:var(--faint);text-transform:uppercase">{{ kick }}</div>
+          <h1 style="font-family:var(--head);font-size:34px;font-weight:600;letter-spacing:-.01em;line-height:1.1;margin:6px 0 0">{{ title }}</h1>
+          <div style="font-size:13.5px;color:var(--muted);margin-top:7px;max-width:70ch;text-wrap:pretty">{{ sub }}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:11px">
+            <sc-for list="{{ tags }}" as="tag" hint-placeholder-count="4">
+              <span style="font-size:11.5px;font-weight:600;color:var(--muted);background:var(--key-bg);border:1px solid var(--divider);padding:3px 9px;white-space:nowrap">#{{ tag }}</span>
+            </sc-for>
+          </div>
+        </div>
+        <div style="margin-left:auto;text-align:right;font-size:12.5px;color:var(--muted);line-height:1.6;max-width:36ch">
+          <b style="display:block;font-size:11.5px;color:var(--faint);font-weight:500">기준 법령</b>
+          {{ lawRef }}
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--divider);margin-top:20px">
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="5">
+          <div style="padding:15px 18px;border-left:1px solid var(--divider)">
+            <b style="display:block;font-family:var(--head);font-size:28px;font-weight:600;line-height:1">{{ s.v }}</b>
+            <span style="font-size:11.5px;color:var(--faint)">{{ s.n }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;font-size:12px;color:var(--muted)">
+        <span style="display:inline-flex;align-items:center;gap:9px;padding:7px 12px;border:1px solid var(--divider);background:var(--panel)"><i style="display:block;width:24px;height:18px;flex:0 0 auto;background:var(--a300);border:1px solid var(--a700)"></i><em style="font-style:normal;font-weight:700;color:var(--text)">선행</em> 절차를 여는 사유 발생·조기 판단</span>
+        <span style="display:inline-flex;align-items:center;gap:9px;padding:7px 12px;border:1px solid var(--divider);background:var(--panel)"><i style="display:block;width:24px;height:18px;flex:0 0 auto;background:var(--a500);border:1px solid var(--a900)"></i><em style="font-style:normal;font-weight:700;color:var(--text)">핵심</em> 반드시 거쳐야 하는 산출물·계약행위</span>
+        <span style="display:inline-flex;align-items:center;gap:9px;padding:7px 12px;border:1px solid var(--divider);background:var(--panel)"><i style="display:block;width:24px;height:18px;flex:0 0 auto;background:var(--a900);border:1px solid var(--a900)"></i><em style="font-style:normal;font-weight:700;color:var(--text)">병목</em> 검토·승인 지연과 재작업이 잦은 구간</span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:9px;font-size:12px;color:var(--muted)">
+        <span style="display:inline-flex;align-items:center;gap:9px;padding:7px 12px;border:1px solid var(--divider);background:var(--panel)"><i style="display:block;width:24px;height:18px;flex:0 0 auto;background:var(--bg);border:1px dashed var(--faint)"></i><em style="font-style:normal;font-weight:700;color:var(--text)">후속</em> 앞 단계 결과를 이행·관리하는 업무</span>
+        <span style="display:inline-flex;align-items:center;gap:9px;padding:7px 12px;border:1px solid var(--divider);background:var(--panel)"><i style="display:block;width:28px;height:0;flex:0 0 auto;border-top:3px solid var(--a500)"></i>업무 순서</span>
+        <span style="display:inline-flex;align-items:center;gap:9px;padding:7px 12px;border:1px solid var(--divider);background:var(--panel)"><i style="display:block;width:28px;height:0;flex:0 0 auto;border-top:3px dashed var(--edge-back)"></i>회귀(보완·반려 재신청)</span>
+      </div>
+
+      <div style="margin-top:18px;overflow-x:auto;-webkit-overflow-scrolling:touch">
+      <div ref="{{ boardRef }}" style="position:relative;min-width:1000px;border:1px solid var(--divider)">
+        <svg ref="{{ svgRef }}" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible">
+          <defs>
+            <marker id="wfar" markerWidth="8" markerHeight="8" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"></path></marker>
+          </defs>
+        </svg>
+
+        <div style="position:relative;z-index:1">
+          <div style="display:flex;align-items:stretch;background:var(--hdbg);color:var(--hdfg);border-bottom:1px solid var(--text)">
+            <div style="flex:0 0 132px;padding:12px 12px 10px;display:flex;align-items:flex-end;font-family:var(--head);font-size:12px;color:var(--hdsub);border-right:1px solid var(--divider)">단계 / 담당</div>
+            <sc-for list="{{ laneHead }}" as="h" hint-placeholder-count="5">
+              <div style="flex:1 1 0;min-width:0;padding:12px;border-right:1px solid var(--divider);font-family:var(--head);font-size:16px;font-weight:500;line-height:1.2">
+                {{ h.name }}
+                <small style="display:block;font-family:'Pretendard',sans-serif;font-size:10.5px;font-weight:500;color:var(--hdsub);letter-spacing:.08em;margin-top:3px">{{ h.no }}</small>
+              </div>
+            </sc-for>
+            <div style="flex:0 0 96px"></div>
+          </div>
+
+          <sc-for list="{{ rows }}" as="row" hint-placeholder-count="6">
+            <div style="display:flex;align-items:stretch;border-bottom:1px dashed var(--divider)">
+              <div style="flex:0 0 132px;padding:14px 12px;display:flex;flex-direction:column;justify-content:center;gap:2px;background:var(--key-bg);border-right:1px solid var(--divider)">
+                <b style="font-family:var(--head);font-size:20px;font-weight:600;line-height:1;color:var(--a700)">{{ row.k }}</b>
+                <span style="font-size:11px;color:var(--muted)">{{ row.n }}</span>
+              </div>
+              <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5">
+                <div style="flex:1 1 0;min-width:0;padding:16px 20px;display:flex;flex-direction:column;gap:10px;border-right:1px solid var(--divider);min-height:96px">
+                  <sc-for list="{{ cell.nodes }}" as="n" hint-placeholder-count="0">
+                    <div data-node="{{ n.id }}" onClick="{{ n.go }}" onMouseEnter="{{ n.enter }}" onMouseLeave="{{ n.leave }}" style="position:relative;background:var(--bg);border:2px solid {{ n.bd }};display:grid;grid-template-columns:38px 1fr;cursor:pointer;opacity:{{ n.dim }};filter:{{ n.filt }};transform:{{ n.tf }};z-index:{{ n.z }};box-shadow:{{ n.glow }};animation:{{ n.anim }};transition:transform .55s cubic-bezier(.2,.8,.3,1),box-shadow .55s,opacity .55s,filter .55s" style-hover="transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.30)">
+                      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 0;background:{{ n.rail }};border-right:1px solid var(--divider)">
+                        <span style="font-family:var(--head);font-size:12px;font-weight:600;letter-spacing:.04em;color:{{ n.idc }}">{{ n.id }}</span>
+                        <i style="display:block;width:9px;height:9px;flex:0 0 auto;background:{{ n.mark }}"></i>
+                      </div>
+                      <div style="padding:10px 11px;display:flex;flex-direction:column;gap:5px;min-width:0">
+                        <span style="font-family:var(--head);font-size:11.5px;font-weight:600;letter-spacing:.12em;color:{{ n.idc }}">{{ n.tagName }}</span>
+                        <div style="font-size:12.5px;line-height:1.45;color:var(--text);text-wrap:pretty">{{ n.t }}</div>
+                        <div style="font-size:10.5px;color:var(--faint)">{{ n.law }}</div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-for>
+              <div style="flex:0 0 96px"></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </div>
+
+      <sc-if value="{{ showIndex }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:30px">
+          <div style="display:flex;align-items:baseline;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--divider)">
+            <span style="font-family:var(--head);font-size:22px;font-weight:600">세부 워크플로우</span>
+            <span style="font-size:11.5px;letter-spacing:.1em;font-family:var(--head);color:var(--faint)">{{ detailCount }} SHEETS · 별도 창</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));border-left:1px solid var(--divider);border-top:1px solid var(--divider);margin-top:14px">
+            <sc-for list="{{ details }}" as="d" hint-placeholder-count="12">
+              <a href="{{ d.href }}" target="_blank" rel="noopener" style="display:block;padding:11px 13px;font-size:12.5px;line-height:1.4;color:var(--muted);border-right:1px solid var(--divider);border-bottom:1px solid var(--divider);background:var(--panel)" style-hover="background:var(--key-bg)">{{ d.label }}</a>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="margin-top:18px;font-size:11.5px;color:var(--faint);line-height:1.8">
+※ 본 워크플로우는 참고 자료입니다. 실제 적용 시 관련 법령·계약조건 원문과 소속 기관 기준을 반드시 확인하시고, 최종 판단은 담당자와 소관 부서의 검토에 따르시기 바랍니다.<br>
+        ※ 법령·지침 개정에 따라 주기적으로 업데이트될 예정이며, 현재 내용은 작성 시점 기준입니다.<br>
+        출처: 학교시설업무 치트키 SCHOOL BIBLE 실무 절차 데이터 및 관련 법령 · 지침 (기관명은 블라인드 처리)<br>
+        오픈소스: Pretendard (SIL OFL 1.1) · Barlow, Barlow Condensed (SIL OFL 1.1) · React (MIT). 워크플로우 도식과 연결선은 별도 차트 라이브러리 없이 직접 구현했습니다.<br>
+        참고: github.com/hosungseo/korea100워크플로우차트
+      </div>
+
+    </div>
+  </div>
+</div>
+
+  <div style="position:fixed;left:0;right:0;bottom:0;z-index:90;background:var(--panel);color:var(--text);border-top:1px solid var(--divider);box-shadow:0 -10px 30px rgba(0,0,0,.20);padding:16px 24px;max-height:46vh;overflow:auto;transform:{{ panelT }};transition:transform .28s cubic-bezier(.2,.8,.3,1)">
+    <div style="display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap">
+      <div style="min-width:210px;flex:1 1 230px">
+        <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted);font-weight:600">노드 상세 <b style="color:var(--text)">{{ selId }}</b>
+          <span style="font-size:11px;font-weight:700;color:var(--a700);border:1px solid var(--divider);background:var(--key-bg);border-radius:4px;padding:1px 7px">{{ selTag }}</span>
+        </div>
+        <div style="font-size:19px;font-weight:700;letter-spacing:-.02em;margin-top:6px">{{ selTitle }}</div>
+        <div style="font-size:12px;color:var(--faint);margin-top:3px">{{ selLane }}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
+          <sc-for list="{{ selChips }}" as="c" hint-placeholder-count="0">
+            <span style="font-size:12px;color:var(--muted);border:1px solid var(--divider);border-radius:5px;padding:3px 9px">{{ c }}</span>
+          </sc-for>
+        </div>
+      </div>
+      <div style="flex:0 0 auto">
+        <div style="border:1px solid var(--divider);border-radius:8px;padding:10px 14px;min-width:124px">
+          <div style="font-size:11px;color:var(--faint)">기한</div>
+          <div style="font-size:13.5px;font-weight:600;margin-top:4px;color:var(--muted);line-height:1.4">{{ selDue }}</div>
+        </div>
+        <sc-if value="{{ selBottle }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:10px;font-size:12.5px;line-height:1.55;color:var(--a900);background:var(--bot-bg);border:1px solid var(--divider);border-radius:6px;padding:9px 11px;max-width:300px">병목 · {{ selBottle }}</div>
+        </sc-if>
+      </div>
+      <div style="flex:1 1 300px;min-width:250px">
+        <div style="font-size:11.5px;color:var(--muted);font-weight:600">법적 근거</div>
+        <div style="font-size:13.5px;font-weight:700;margin-top:6px">{{ selLaw }}</div>
+        <div style="font-size:12.5px;line-height:1.65;color:var(--muted);margin-top:4px;text-wrap:pretty">{{ selLawT }}</div>
+      </div>
+      <button type="button" onClick="{{ closePanel }}" style="flex:0 0 auto;align-self:flex-start;font:inherit;font-size:12px;font-weight:600;color:var(--muted);background:var(--panel);border:1px solid var(--divider);border-radius:6px;padding:5px 11px;cursor:pointer">닫기 ✕</button>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultBoard&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;cycle&quot;,&quot;pre&quot;,&quot;pubrev&quot;,&quot;contest&quot;,&quot;bid&quot;,&quot;order&quot;,&quot;audit&quot;,&quot;advis&quot;,&quot;ve&quot;,&quot;dfs&quot;,&quot;precert&quot;,&quot;dseval&quot;,&quot;cm&quot;,&quot;permit&quot;,&quot;change&quot;,&quot;extend&quot;,&quot;report&quot;,&quot;subcon&quot;,&quot;safety&quot;,&quot;prefin&quot;,&quot;finish&quot;,&quot;evalx&quot;,&quot;safecert&quot;,&quot;demol&quot;,&quot;indirect&quot;,&quot;fmsafe&quot;],&quot;default&quot;:&quot;cycle&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showDetailIndex&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const KIND = {
+  lead: { name:'선행', bd:'var(--divider)', rail:'var(--key-bg)', mark:'var(--a300)', idc:'var(--a700)' },
+  key:  { name:'핵심', bd:'var(--divider)', rail:'var(--key-bg)', mark:'var(--a500)', idc:'var(--a700)' },
+  bot:  { name:'병목', bd:'var(--a900)',    rail:'var(--bot-bg)', mark:'var(--a900)', idc:'var(--a900)' },
+  post: { name:'후속', bd:'var(--divider)', rail:'var(--post-bg)', mark:'var(--faint)', idc:'var(--muted)' }
+};
+const MODES = [['light','라이트'],['dark','다크'],['warm','웜']];
+const DETAILS = ['BF인증','ZEB인증','가설건축물','가설구조물안전성','감리발주','건설사업관리계획','건설산업기본법','건축물대장','계약금액조정','공공건축심의','공사기간산정','공사발주','공사중안전점검','기본안전보건대장','기술자문위원회','기타용역발주','대규모시설일상감사','도시계획시설결정','복합자재품질관리서','본인증용역발주','사업관리업무추진','사용승인','사전기획','산업안전보건관리비','산업안전보건업무','설계경제성검토_VE','설계공모','설계변경_발주청요청','설계변경_설계하자','설계변경_시공자요청','설계안전보건대장','설계안전성검토_DfS','설계용역평가','시행계획_건축승인','안전관리계획서','안전관리비계상','안전성평가','유해위험방지계획서','일상감사_설계용역','일상감사_시설공사','임시소방시설','준공검사','지하안전평가','폐기물처리용역','해체계획서작성검토','해체공사안전관리','화재감시자'];
+
+class Component extends DCLogic {
+  state = { key: null, sel: null, hover: null, q: '', mode: 'light', narrow: (typeof window !== 'undefined' && window.innerWidth < 860) };
+  active() { return this.state.sel || this.state.hover; }
+
+  componentDidMount() {
+    let m = 'light', k = null;
+    try { m = localStorage.getItem('wfUnifiedMode') || 'light'; k = localStorage.getItem('wfUnifiedBoard'); } catch (e) {}
+    this._tick = setInterval(() => {
+      if (window.WF_BOARDS && window.WF_ORDER) {
+        clearInterval(this._tick);
+        const want = this.props.defaultBoard;
+        const pick = (window.WF_BOARDS[want] && want) || (k && window.WF_BOARDS[k] && k) || window.WF_ORDER[0];
+        this.setState({ key: pick, mode: m });
+      }
+    }, 60);
+    this._onResize = () => {
+      const n = window.innerWidth < 860;
+      if (n !== this.state.narrow) this.setState({ narrow: n });
+      clearTimeout(this._rz); this._rz = setTimeout(() => this.draw(), 200);
+    };
+    window.addEventListener('resize', this._onResize);
+    if (window.ResizeObserver) {
+      this._ro = new ResizeObserver(() => this._onResize());
+      const attach = () => {
+        const el = this.boardRef && this.boardRef.current;
+        if (el) this._ro.observe(el); else setTimeout(attach, 120);
+      };
+      attach();
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.draw());
+    this._esc = (e) => { if (e.key === 'Escape') this.setState({ sel: null }); };
+    document.addEventListener('keydown', this._esc);
+  }
+  componentWillUnmount() {
+    clearInterval(this._tick); clearTimeout(this._rz); clearTimeout(this._late);
+    if (this._ro) this._ro.disconnect();
+    window.removeEventListener('resize', this._onResize);
+    document.removeEventListener('keydown', this._esc);
+  }
+  componentDidUpdate(pp, ps) {
+    const prev = ps || {};
+    if (prev.key === this.state.key && (prev.sel !== this.state.sel || prev.hover !== this.state.hover)) { this.relight(); return; }
+    this.relight();
+    requestAnimationFrame(() => this.draw());
+    clearTimeout(this._late); this._late = setTimeout(() => this.draw(), 340);
+    clearTimeout(this._late2); this._late2 = setTimeout(() => this.draw(), 1200);
+  }
+
+  board() { return (window.WF_BOARDS && this.state.key) ? window.WF_BOARDS[this.state.key] : null; }
+  cssv(n, f) { const el = this.boardRef && this.boardRef.current; if (!el) return f; const v = getComputedStyle(el).getPropertyValue(n).trim(); return v || f; }
+
+  relight() {
+    const svg = this.svgRef && this.svgRef.current; if (!svg) return;
+    const sel = this.active();
+    Array.prototype.slice.call(svg.querySelectorAll('path.e')).forEach(p => {
+      const lit = sel && (p.dataset.a === sel || p.dataset.b === sel);
+      const back = p.dataset.back === '1';
+      if (!sel) {
+        p.style.animation = 'none';
+        p.setAttribute('stroke-width', '1.4');
+        p.setAttribute('stroke-dasharray', back ? '6 5' : 'none');
+        p.setAttribute('opacity', back ? '.45' : '.6');
+      } else if (lit) {
+        p.setAttribute('stroke-width', '2');
+        p.setAttribute('stroke-dasharray', '7 6');
+        p.setAttribute('opacity', '.62');
+        p.style.animation = 'wfDash 4.4s linear infinite';
+      } else {
+        p.style.animation = 'none';
+        p.setAttribute('stroke-width', '1.4');
+        p.setAttribute('stroke-dasharray', back ? '6 5' : 'none');
+        p.setAttribute('opacity', back ? '.45' : '.6');
+      }
+    });
+    Array.prototype.slice.call(svg.querySelectorAll('circle.mdot')).forEach(c => c.remove());
+    if (!sel) return;
+    const NS = 'http://www.w3.org/2000/svg';
+    const cD = this.cssv('--dot', '#00417f');
+    Array.prototype.slice.call(svg.querySelectorAll('path.e')).forEach(p => {
+      if (p.dataset.a !== sel && p.dataset.b !== sel) return;
+      if (p.dataset.back === '1') return;
+      const dt = document.createElementNS(NS, 'circle');
+      dt.setAttribute('class', 'mdot'); dt.setAttribute('r', '3.4');
+      dt.setAttribute('fill', cD); dt.setAttribute('pointer-events', 'none');
+      const am = document.createElementNS(NS, 'animateMotion');
+      am.setAttribute('dur', '6.4s'); am.setAttribute('repeatCount', 'indefinite');
+      am.setAttribute('path', p.getAttribute('d'));
+      dt.appendChild(am); svg.appendChild(dt);
+    });
+  }
+
+  draw() {
+    const svg = this.svgRef && this.svgRef.current, board = this.boardRef && this.boardRef.current, B = this.board();
+    if (!svg || !board || !B) return;
+    Array.prototype.slice.call(svg.querySelectorAll('path.e,circle.mdot')).forEach(p => p.remove());
+    const br = board.getBoundingClientRect();
+    if (!br.width) return;
+    svg.setAttribute('viewBox', '0 0 ' + br.width + ' ' + br.height);
+    const NS = 'http://www.w3.org/2000/svg';
+    const cE = this.cssv('--edge', '#123f66'), cB = this.cssv('--edge-back', '#3b4045');
+    svg.style.color = cE;
+    (B.EDGES || []).forEach(e => {
+      const a = board.querySelector('[data-node="' + e[0] + '"]');
+      const b = board.querySelector('[data-node="' + e[1] + '"]');
+      if (!a || !b) return;
+      const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(), back = !!e[2];
+      let d;
+      if (Math.abs(ra.top - rb.top) < 8) {
+        const y = ra.top - br.top + ra.height / 2 + (back ? 12 : -6);
+        d = (rb.left > ra.left)
+          ? 'M' + (ra.right - br.left + 2) + ',' + y + ' H' + (rb.left - br.left - 7)
+          : 'M' + (ra.left - br.left - 2) + ',' + y + ' H' + (rb.right - br.left + 7);
+      } else if (rb.top > ra.top) {
+        const x1 = ra.left - br.left + ra.width / 2, x2 = rb.left - br.left + rb.width / 2;
+        const my = (ra.bottom - br.top) + ((rb.top - br.top) - (ra.bottom - br.top)) / 2;
+        d = 'M' + x1 + ',' + (ra.bottom - br.top) + ' V' + my + ' H' + x2 + ' V' + (rb.top - br.top - 7);
+      } else {
+        const mx = br.width - 46;
+        d = 'M' + (ra.right - br.left + 2) + ',' + (ra.top - br.top + ra.height / 2) + ' H' + mx + ' V' + (rb.top - br.top + rb.height / 2) + ' H' + (rb.right - br.left + 7);
+      }
+      const p = document.createElementNS(NS, 'path');
+      p.setAttribute('class', 'e'); p.setAttribute('d', d); p.setAttribute('fill', 'none');
+      p.setAttribute('stroke', back ? cB : cE); p.setAttribute('stroke-width', '1.4');
+      p.setAttribute('opacity', back ? '.45' : '.6'); p.setAttribute('marker-end', 'url(#wfar)');
+      if (back) p.setAttribute('stroke-dasharray', '6 5');
+      p.dataset.a = e[0]; p.dataset.b = e[1]; p.dataset.back = back ? '1' : '0';
+      svg.appendChild(p);
+
+    });
+    this.relight();
+  }
+
+  pick(k) {
+    try { localStorage.setItem('wfUnifiedBoard', k); } catch (e) {}
+    this.setState({ key: k, sel: null, q: '' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  setMode(m) {
+    try { localStorage.setItem('wfUnifiedMode', m); } catch (e) {}
+    this.setState({ mode: m });
+    setTimeout(() => this.draw(), 60);
+  }
+
+  renderVals() {
+    this.boardRef = this.boardRef || React.createRef();
+    this.svgRef = this.svgRef || React.createRef();
+    const B = this.board();
+    const NM = window.WF_BOARDNM || {};
+    const q = this.state.q.trim().toLowerCase();
+
+    const sig = this.state.key + '|' + this.state.mode;
+    if (sig !== this._sig) {
+      this._sig = sig;
+      requestAnimationFrame(() => this.draw());
+      clearTimeout(this._late); this._late = setTimeout(() => this.draw(), 340);
+      clearTimeout(this._late2); this._late2 = setTimeout(() => this.draw(), 1200);
+    }
+    this._act = this.active();
+
+    let results = [];
+    if (q) {
+      (window.WF_ORDER || []).forEach(bk => {
+        const bb = window.WF_BOARDS[bk]; if (!bb) return;
+        bb.NODES.forEach(n => {
+          if (results.length >= 40) return;
+          const hay = [n.id, n.t, n.title, n.law, n.lane, n.due, (n.chips || []).join(' '), n.bottle, n.lawT].join(' ').toLowerCase();
+          if (hay.indexOf(q) < 0) return;
+          const label = n.title || n.t;
+          const i = label.toLowerCase().indexOf(q);
+          results.push({
+            id: n.id, board: NM[bk] || bk,
+            pre: i < 0 ? label : label.slice(0, i),
+            mid: i < 0 ? '' : label.slice(i, i + q.length),
+            post: i < 0 ? '' : label.slice(i + q.length),
+            go: () => { try { localStorage.setItem('wfUnifiedBoard', bk); } catch (e) {} this.setState({ key: bk, q: '', sel: n.id }); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+          });
+        });
+      });
+    }
+
+    const nw = this.state.narrow;
+    const base = {
+      boardRef: this.boardRef, svgRef: this.svgRef, q: this.state.q, mode: this.state.mode,
+      mainDir: nw ? 'column' : 'row',
+      mainGap: nw ? '14px' : '26px',
+      sidePos: nw ? 'static' : 'sticky',
+      sideFlex: nw ? '0 0 auto' : '0 0 168px',
+      sideMax: nw ? 'none' : 'calc(100vh - 32px)',
+      tabsDir: nw ? 'row' : 'column',
+      tabsMin: nw ? 'max-content' : '0',
+      tabWrap: nw ? 'nowrap' : 'normal',
+      onQuery: (e) => this.setState({ q: e.target.value }),
+      onKey: (e) => { if (e.key === 'Enter' && results[0]) results[0].go(); if (e.key === 'Escape') this.setState({ q: '' }); },
+      clearQ: () => this.setState({ q: '' }),
+      closePanel: () => this.setState({ sel: null, hover: null }, () => this.relight()),
+      xDisplay: q ? 'block' : 'none',
+      resDisplay: q ? 'block' : 'none',
+      results, noResults: !!q && results.length === 0,
+      showIndex: this.props.showDetailIndex !== false,
+      detailCount: DETAILS.length,
+      details: DETAILS.map(d => ({ href: 'uploads/워크플로우/워크플로우세부_' + d + '.html', label: d.replace(/_/g, ' · ') })),
+      modes: MODES.map(m => ({ label: m[1], go: () => this.setMode(m[0]),
+        bg: this.state.mode === m[0] ? 'var(--text)' : 'transparent',
+        fg: this.state.mode === m[0] ? 'var(--bg)' : 'var(--muted)' })),
+      tabs: (window.WF_ORDER || []).map(k => {
+        const on = k === this.state.key;
+        return { name: NM[k] || k, go: () => this.pick(k),
+          bg: on ? 'var(--key-bg)' : 'transparent',
+          fg: on ? 'var(--text)' : 'var(--muted)',
+          mark: on ? 'inset 3px 0 0 var(--a500)' : 'none' };
+      })
+    };
+    if (!B) return Object.assign(base, { rows: [], laneHead: [], stats: [], tags: [], panelT: 'translateY(110%)' });
+
+    const sel = this.active();
+    const rows = B.STAGES.map((st, si) => ({
+      k: st.k, n: st.n,
+      cells: B.LANES.map(ln => ({
+        nodes: B.NODES.filter(n => n.s === si && n.l === ln).map(n => {
+          const kd = KIND[n.k] || KIND.key;
+          const is = sel === n.id;
+          return Object.assign({}, n, {
+            tagName: kd.name, bd: kd.bd, rail: kd.rail, mark: kd.mark, idc: kd.idc, law: n.law || '',
+            dim: sel ? (is ? 1 : 0.32) : 1,
+            filt: sel && !is ? 'saturate(.5)' : 'none',
+            tf: is ? 'scale(1.02)' : 'none',
+            z: is ? 5 : 'auto',
+            anim: is ? 'wfPop .8s ease both' : 'none',
+            glow: is ? '0 10px 26px rgba(0,0,0,.16), 0 0 0 2px var(--a500)' : 'none',
+            go: () => this.setState(s => ({ sel: s.sel === n.id ? null : n.id }), () => this.relight()),
+            enter: () => this.setState({ hover: n.id }, () => this.relight()),
+            leave: () => this.setState(s => (s.hover === n.id ? { hover: null } : null), () => this.relight())
+          });
+        })
+      }))
+    }));
+
+    const bots = B.NODES.filter(n => n.k === 'bot').length;
+    const back = (B.EDGES || []).filter(e => !!e[2]).length;
+    const sn = this.state.sel ? B.NODES.filter(n => n.id === this.state.sel)[0] : null;
+
+    return Object.assign(base, {
+      kick: B.kick, title: B.title, sub: B.sub,
+      lawRef: (B.right || '').replace(/<[^>]+>/g, ' ').replace('기준 법령', '').trim(),
+      tags: (window.WF_TAGS && window.WF_TAGS[this.state.key]) || [],
+      laneHead: (B.laneHead || []).map(l => ({ name: l[0], no: l[1] })),
+      stats: [{ v: B.NODES.length, n: '절차 노드' }, { v: B.LANES.length, n: '행위 레인' }, { v: B.STAGES.length, n: '단계 게이트' }, { v: bots, n: '병목 구간' }, { v: back, n: '회귀 경로' }],
+      rows,
+      panelT: sn ? 'translateY(0)' : 'translateY(110%)',
+      selId: sn ? sn.id : '', selTag: sn ? (KIND[sn.k] || KIND.key).name : '',
+      selTitle: sn ? (sn.title || sn.t) : '', selLane: sn ? sn.lane : '',
+      selChips: sn ? (sn.chips || []) : [], selDue: sn ? sn.due : '',
+      selBottle: sn ? (sn.bottle || '') : '', selLaw: sn ? (sn.law || '—') : '', selLawT: sn ? (sn.lawT || '') : ''
+    });
+  }
+}
+
+</script>
+</body>
+</html>
