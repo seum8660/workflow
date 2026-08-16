@@ -3,8 +3,8 @@ chcp 65001 > nul
 setlocal
 
 REM ============================================================
-REM  school_bible 자동 업로드
-REM  1) 이 파일을 로컬 저장소 폴더(school_bible) 안에 둡니다.
+REM  workflow 자동 업로드
+REM  1) 이 파일을 로컬 저장소 폴더(workflow) 안에 둡니다.
 REM  2) 프로젝트 압축본을 풀어 같은 폴더에 덮어씁니다.
 REM  3) 이 파일을 더블클릭합니다.
 REM ============================================================
@@ -16,7 +16,7 @@ if errorlevel 1 (
   echo [오류] 이 폴더는 git 저장소가 아닙니다.
   echo        먼저 아래 명령으로 저장소를 내려받으세요:
   echo.
-  echo        git clone https://github.com/seum8660/school_bible.git
+  echo        git clone https://github.com/seum8660/workflow.git
   echo.
   pause
   exit /b 1
@@ -57,5 +57,5 @@ if errorlevel 1 (
 )
 
 echo.
-echo 완료. https://github.com/seum8660/school_bible
+echo 완료. https://github.com/seum8660/workflow
 pause
