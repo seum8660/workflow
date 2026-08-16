@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="data/wf_boards.js"></script>
+<script src="data/wf_tags.js"></script>
+<script src="data/wf_docs.js"></script>
+<style>
+:root{
+  --bg:#fff; --panel:#fff; --text:#000000; --divider:rgba(0,0,0,.52);
+  --muted:rgba(0,0,0,.92); --faint:rgba(0,0,0,.80);
+  --a300:#3f7db8; --a500:#164a75; --a700:#0d3350; --a900:#000c14;
+  --key-bg:#d3e7fa;
+  --head:'Barlow Condensed','Pretendard',system-ui,sans-serif;
+}
+body{margin:0;font-family:'Pretendard','Malgun Gothic',system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;word-break:keep-all;background:#fff;color:#000}
+a{color:#0d3350;text-decoration:none}
+a:hover{color:#164a75}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--bg);color:var(--text)">
+<div style="padding:clamp(14px,3vw,22px) clamp(12px,3vw,28px) 60px;max-width:1680px;margin:0 auto">
+
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid var(--divider)">
+    <span style="font-family:var(--head);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)">School Bible / Summary Docs</span>
+    <a href="학교시설 워크플로우 보드.dc.html" style="font-size:12px;font-weight:600;color:var(--muted);border:1px solid var(--divider);padding:6px 12px" style-hover="color:#fff;background:var(--a700)">← 워크플로우 보드</a>
+    <a href="학교시설 워크플로우 전자책.dc.html" style="font-size:12px;font-weight:600;color:var(--muted);border:1px solid var(--divider);padding:6px 12px" style-hover="color:#fff;background:var(--a700)">전자책</a>
+    <div style="position:relative;flex:0 1 300px;min-width:200px;margin-left:auto">
+      <input type="text" placeholder="문서 · 발행기관 · 법령 검색" autocomplete="off" value="{{ q }}" onChange="{{ onQuery }}" style="font:inherit;font-size:12.5px;width:100%;padding:7px 11px;background:var(--panel);color:var(--text);border:2px solid var(--a900);outline:none;box-sizing:border-box">
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;padding:22px 0 20px;border-bottom:1px solid var(--divider)">
+    <div>
+      <div style="font-family:var(--head);font-size:12px;font-weight:500;letter-spacing:.14em;color:var(--faint);text-transform:uppercase">Summary Board / 법령 · 매뉴얼 · 지침 요약</div>
+      <h1 style="font-family:var(--head);font-size:34px;font-weight:600;letter-spacing:-.01em;line-height:1.1;margin:6px 0 0">요약문서 보드</h1>
+      <div style="font-size:13.5px;color:var(--muted);margin-top:7px;max-width:70ch;text-wrap:pretty">학교시설 업무에 걸리는 매뉴얼·해설서·고시를 A4 한두 장으로 압축한 요약문서입니다. 각 문서는 관련 워크플로우 보드와 연결되어 있고, 보드 헤더의 바로보기 버튼에서도 같은 문서가 열립니다.</div>
+    </div>
+    <div style="margin-left:auto;display:grid;grid-template-columns:repeat(3,minmax(84px,1fr));border:1px solid var(--divider)">
+      <sc-for list="{{ stats }}" as="s" hint-placeholder-count="3">
+        <div style="padding:13px 16px;border-left:1px solid var(--divider)">
+          <b style="display:block;font-family:var(--head);font-size:26px;font-weight:600;line-height:1">{{ s.v }}</b>
+          <span style="font-size:11.5px;color:var(--faint)">{{ s.n }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:0;border-top:1px solid var(--divider);margin-top:20px">
+    <sc-for list="{{ docs }}" as="d" hint-placeholder-count="19">
+      <a href="{{ d.f }}" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:9px;padding:18px 20px 20px;border-bottom:1px solid var(--divider);border-left:1px solid var(--divider);color:var(--text)" style-hover="background:var(--key-bg)">
+        <div style="display:flex;align-items:baseline;gap:10px">
+          <b style="font-family:var(--head);font-size:26px;font-weight:600;line-height:1;color:var(--a500)">{{ d.no }}</b>
+          <span style="font-family:var(--head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)">Summary</span>
+          <span style="margin-left:auto;font-size:11.5px;color:var(--a700);font-weight:600">열기 →</span>
+        </div>
+        <div style="font-size:15px;font-weight:700;line-height:1.35;text-wrap:pretty">{{ d.t }}</div>
+        <div style="font-size:12px;color:var(--faint);line-height:1.5">{{ d.org }}</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5;text-wrap:pretty">{{ d.law }}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:2px">
+          <sc-for list="{{ d.boards }}" as="b" hint-placeholder-count="1">
+            <span style="font-size:11px;font-weight:600;color:var(--muted);background:var(--key-bg);border:1px solid var(--divider);padding:3px 8px;white-space:nowrap">{{ b }}</span>
+          </sc-for>
+        </div>
+      </a>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:28px 4px;font-size:13px;color:var(--faint)">검색어와 일치하는 요약문서가 없습니다.</div>
+  </sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { q: '', ready: false };
+
+  componentDidMount() {
+    this._t = setInterval(() => {
+      if (window.WF_DOCS) { clearInterval(this._t); this.setState({ ready: true }); }
+    }, 60);
+  }
+  componentWillUnmount() { clearInterval(this._t); }
+
+  renderVals() {
+    const all = window.WF_DOCS || [];
+    const NM = window.WF_BOARDNM || {};
+    const BS = window.WF_BOARDS || {};
+    const q = this.state.q.trim().toLowerCase();
+    const hit = (d) => !q || [d.no, d.t, d.org, d.law].join(' ').toLowerCase().indexOf(q) >= 0;
+    const docs = all.filter(hit).map(d => ({
+      no: d.no, f: d.f, t: d.t, org: d.org, law: d.law,
+      boards: (d.b || []).map(k => NM[k] || (BS[k] && BS[k].title) || k)
+    }));
+    const linked = {};
+    all.forEach(d => (d.b || []).forEach(k => { linked[k] = 1; }));
+    return {
+      q: this.state.q,
+      onQuery: (e) => this.setState({ q: e.target.value }),
+      docs,
+      empty: this.state.ready && docs.length === 0,
+      stats: [
+        { v: all.length, n: '요약문서' },
+        { v: Object.keys(linked).length, n: '연결 보드' },
+        { v: (window.WF_ORDER || []).length, n: '전체 보드' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

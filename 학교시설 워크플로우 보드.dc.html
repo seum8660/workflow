@@ -14,6 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="data/wf_boards.js"></script>
 <script src="data/wf_tags.js"></script>
+<script src="data/wf_docs.js"></script>
 <style>
 [data-mode]{
   --bg:#fff; --panel:#fff; --text:#000000; --divider:rgba(0,0,0,.52);
@@ -58,6 +59,7 @@ a:hover{color:#164a75}
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid var(--divider)">
     <span style="font-family:var(--head);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)">School Bible / Workflow Board</span>
     <a href="학교시설 워크플로우 인트로.dc.html" style="font-size:12px;font-weight:600;color:var(--muted);border:1px solid var(--divider);padding:6px 12px" style-hover="color:#fff;background:var(--a700)">← 인트로</a>
+    <a href="학교시설 요약문서 보드.dc.html" style="font-size:12px;font-weight:600;color:var(--muted);border:1px solid var(--divider);padding:6px 12px" style-hover="color:#fff;background:var(--a700)">요약문서 보드</a>
     <div style="position:relative;flex:0 1 300px;min-width:200px">
       <input type="text" placeholder="절차 · 법령 · 서류 검색 (전체 보드)" autocomplete="off" value="{{ q }}" onChange="{{ onQuery }}" onKeyDown="{{ onKey }}" style="font:inherit;font-size:12.5px;width:100%;padding:7px 30px 7px 11px;background:var(--panel);color:var(--text);border:2px solid var(--a900);outline:none;box-sizing:border-box">
       <button type="button" onClick="{{ clearQ }}" aria-label="검색어 지우기" style="position:absolute;right:2px;top:1px;bottom:1px;width:26px;font:inherit;font-size:13px;color:var(--faint);background:transparent;border:0;cursor:pointer;display:{{ xDisplay }}">✕</button>
@@ -110,6 +112,20 @@ a:hover{color:#164a75}
           {{ lawRef }}
         </div>
       </div>
+
+      <sc-if value="{{ hasDocs }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;padding:14px 0 0">
+          <span style="font-family:var(--head);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);padding-top:7px">요약문서</span>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;flex:1 1 320px">
+            <sc-for list="{{ docs }}" as="d" hint-placeholder-count="0">
+              <a href="{{ d.f }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;line-height:1.35;color:var(--a700);border:1px solid var(--a700);padding:7px 12px;text-align:left" style-hover="color:#fff;background:var(--a700)">
+                <svg width="13" height="15" viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="1.4" style="flex:0 0 auto"><path d="M1.6 1h5.2L10.4 4.4V13H1.6z"></path><path d="M6.8 1v3.4h3.6"></path><path d="M3.6 7.6h4.8M3.6 10.1h3.2"></path></svg>
+                {{ d.t }}
+              </a>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
 
       <div style="display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--divider);margin-top:20px">
         <sc-for list="{{ stats }}" as="s" hint-placeholder-count="5">
@@ -497,6 +513,8 @@ class Component extends DCLogic {
       kick: B.kick, title: B.title, sub: B.sub,
       lawRef: (B.right || '').replace(/<[^>]+>/g, ' ').replace('기준 법령', '').trim(),
       tags: (window.WF_TAGS && window.WF_TAGS[this.state.key]) || [],
+      docs: (((window.WF_BOARDDOC || {})[this.state.key]) || []).map(d => ({ f: d.f, t: d.t })),
+      hasDocs: (((window.WF_BOARDDOC || {})[this.state.key]) || []).length > 0,
       laneHead: (B.laneHead || []).map(l => ({ name: l[0], no: l[1] })),
       stats: [{ v: B.NODES.length, n: '절차 노드' }, { v: B.LANES.length, n: '행위 레인' }, { v: B.STAGES.length, n: '단계 게이트' }, { v: bots, n: '병목 구간' }, { v: back, n: '회귀 경로' }],
       rows,
