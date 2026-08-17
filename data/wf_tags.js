@@ -3,10 +3,10 @@
    - WF_BOARDNM  : 보드 키 → 보드 이름
    - WF_GRAPH  : 그래프 뷰(2D·3D)에 합칠 노드/링크
 */
-var WF_BOARDNM={cycle:'프로세스(Process)',change:'설계변경',extend:'공기연장',cm:'감리방식',safety:'안전사고',permit:'인허가',evalx:'엔지니어링평가',pre:'사전기획 적정성검토',pubrev:'공공건축심의',contest:'설계공모 운영',bid:'설계 입찰공고',order:'설계용역 발주',audit:'일상감사',advis:'기술자문위원회',ve:'설계경제성검토(VE)',dfsrun:'DFS 처리절차',dfs:'설계안전성검토(DfS)',precert:'예비인증 신청',dseval:'설계용역 평가',safecert:'교육시설 안전인증',report:'실정보고',prefin:'예비준공검사',finish:'준공검사',demol:'해체계획서 작성·검토',indirect:'공기연장 간접공사비',fmsafe:'시설물 안전·유지관리',subcon:'건설공사 하도급 심사'};
+var WF_BOARDNM={cycle:'프로세스(Process)',change:'설계변경',extend:'공기연장',cm:'감리방식',safety:'안전사고',permit:'인허가',evalx:'엔지니어링평가',pre:'사전기획 적정성검토',pubrev:'공공건축심의',contest:'설계공모 운영',bid:'설계 입찰공고',order:'설계용역 발주',audit:'일상감사',advis:'기술자문위원회',ve:'설계경제성검토(VE)',dfsrun:'건설공사 안전관리 업무수행',dfs:'설계안전성검토',precert:'예비인증 신청',dseval:'설계용역 평가',safecert:'교육시설 안전인증',report:'실정보고',prefin:'예비준공검사',finish:'준공검사',demol:'해체계획서 작성·검토',indirect:'공기연장 간접공사비',fmsafe:'시설물 안전·유지관리',subcon:'건설공사 하도급 심사',quality:'건설공사 품질관리',hinsur:'건설공사 사후정산',postev:'건설공사 사후평가',engord:'엔지니어링사업 발주',cems:'CEMS 실적 등재',bfcert:'BF 인증',sunday:'일요일 휴무제'};
 
 var WF_TAGS={
-  cycle:['전주기','사전기획','설계','발주','준공검사'],
+  cycle:['PROCESS','사전기획','설계','발주','준공검사'],
   pre:['사전기획','적정성검토','교육시설안전원','그린스마트'],
   pubrev:['공공건축심의','건축서비스산업법','심의위원회'],
   contest:['설계공모','심사위원회','당선작'],
@@ -16,7 +16,7 @@ var WF_TAGS={
   advis:['기술자문위원회','공사기간산정','설계변경'],
   ve:['VE','설계경제성검토','건설기술진흥법'],
   dfs:['DfS','설계안전성검토','국토안전관리원'],
-  dfsrun:['DFS','처리절차','검토비용','과태료','국토안전관리원'],
+  dfsrun:['건설공사 안전관리','처리절차','검토비용','과태료','국토안전관리원'],
   precert:['예비인증','BF','ZEB','녹색건축'],
   dseval:['설계용역평가','건설엔지니어링','평가위원회'],
   cm:['건설사업관리','감리','감독권한대행','건설사업관리계획'],
@@ -32,7 +32,14 @@ var WF_TAGS={
   demol:['해체계획서','해체공사','석면'],
   indirect:['간접공사비','공기연장','실비정산'],
   fmsafe:['시설물안전법','정기안전점검','제3종시설물'],
-  subcon:['하도급','하도급심사','하도급율','부대입찰','건설산업기본법']
+  subcon:['하도급','하도급심사','하도급율','부대입찰','건설산업기본법'],
+  quality:['품질관리계획','품질시험','자재공급원','레미콘','CSI'],
+  hinsur:['건강보험','사후정산','건설일용근로자','EDI','보험료'],
+  postev:['사후평가','사업수행성과','전문관리기관','사후평가위원회'],
+  engord:['엔지니어링발주','과업지시서','대가산정','PQ','협상에의한계약'],
+  cems:['CEMS','실적등재','건설사업관리계획','G2B','업무중복도'],
+  bfcert:['BF인증','예비인증','본인증','편의시설','장애인등편의법'],
+  sunday:['일요일휴무제','사전승인','사후승인','불시점검','근로기준법']
 };
 
 /* 보드 → 어느 단계(장)에 붙일지 */
@@ -41,7 +48,7 @@ var WF_PHASE={
   order:'phase:design',audit:'phase:design',advis:'phase:design',ve:'phase:design',dfs:'phase:design',dfsrun:'phase:design',
   precert:'phase:design',dseval:'phase:design',cm:'phase:cm',permit:'phase:plan',change:'phase:const',
   extend:'phase:const',report:'phase:const',safety:'phase:const',prefin:'phase:comp',finish:'phase:comp',
-  evalx:'phase:comp',safecert:'phase:comp',demol:'phase:const',indirect:'phase:const',fmsafe:'phase:comp',subcon:'phase:const'
+  evalx:'phase:comp',safecert:'phase:comp',demol:'phase:const',indirect:'phase:const',fmsafe:'phase:comp',subcon:'phase:const',quality:'phase:const',hinsur:'phase:const',postev:'phase:comp',engord:'phase:design',cems:'phase:cm',bfcert:'phase:design',sunday:'phase:const'
 };
 
 window.WF_GRAPH=(function(){

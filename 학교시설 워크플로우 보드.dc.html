@@ -21,7 +21,7 @@
   --muted:rgba(0,0,0,.92); --faint:rgba(0,0,0,.80);
   --a300:#3f7db8; --a500:#164a75; --a700:#0d3350; --a900:#000c14;
   --key-bg:#d3e7fa; --bot-bg:#aacff2; --chip:#fff;
-  --edge:#123f66; --edge-back:#3b4045; --dot:#00417f;
+  --edge:#123f66; --edge-back:#9a6b1c; --dot:#00417f;
   --hdbg:#000c14; --hdfg:#ffffff; --hdsub:rgba(255,255,255,1);
   --post-bg:rgba(128,132,136,.16);
   --head:'Barlow Condensed','Pretendard',system-ui,sans-serif;
@@ -31,7 +31,7 @@
   --muted:rgba(255,255,255,.94); --faint:rgba(255,255,255,.82);
   --a300:#6a9ac4; --a500:#bfdcfa; --a700:#dcefff; --a900:#f4faff;
   --key-bg:#12243a; --bot-bg:#1f4066; --chip:#0d1116;
-  --edge:#bfdcfa; --edge-back:#b6bfc7; --dot:#bfdcfa;
+  --edge:#bfdcfa; --edge-back:#e0b463; --dot:#bfdcfa;
   --hdbg:#123a5c; --hdfg:#ffffff; --hdsub:rgba(255,255,255,1);
   --post-bg:rgba(180,186,192,.16);
 }
@@ -40,7 +40,7 @@
   --muted:rgba(15,11,2,.92); --faint:rgba(15,11,2,.80);
   --a300:#b98f45; --a500:#6d4810; --a700:#4f3309; --a900:#1b1103;
   --key-bg:#ead7b2; --bot-bg:#d9c393; --chip:#fffef8;
-  --edge:#6d4810; --edge-back:#5f5646; --dot:#4f3309;
+  --edge:#6d4810; --edge-back:#2f6b6b; --dot:#4f3309;
   --hdbg:#1b1103; --hdfg:#fffef8; --hdsub:rgba(255,254,248,1);
   --post-bg:rgba(109,72,16,.16);
 }
@@ -151,7 +151,7 @@ a:hover{color:#164a75}
       <div ref="{{ boardRef }}" style="position:relative;min-width:1000px;border:1px solid var(--divider)">
         <svg ref="{{ svgRef }}" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible">
           <defs>
-            <marker id="wfar" markerWidth="8" markerHeight="8" refX="6.5" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"></path></marker>
+            <marker id="wfar" markerWidth="7" markerHeight="7" refX="5.4" refY="2.4" orient="auto"><path d="M0,0 L5.6,2.4 L0,4.8 Z" fill="currentColor"></path></marker>
           </defs>
         </svg>
 
@@ -258,7 +258,7 @@ a:hover{color:#164a75}
 </div>
 
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;defaultBoard&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;cycle&quot;,&quot;pre&quot;,&quot;pubrev&quot;,&quot;contest&quot;,&quot;bid&quot;,&quot;order&quot;,&quot;audit&quot;,&quot;advis&quot;,&quot;ve&quot;,&quot;dfs&quot;,&quot;precert&quot;,&quot;dseval&quot;,&quot;cm&quot;,&quot;permit&quot;,&quot;change&quot;,&quot;extend&quot;,&quot;report&quot;,&quot;subcon&quot;,&quot;safety&quot;,&quot;prefin&quot;,&quot;finish&quot;,&quot;evalx&quot;,&quot;safecert&quot;,&quot;demol&quot;,&quot;indirect&quot;,&quot;fmsafe&quot;],&quot;default&quot;:&quot;cycle&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showDetailIndex&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultBoard&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;cycle&quot;,&quot;pre&quot;,&quot;pubrev&quot;,&quot;contest&quot;,&quot;bid&quot;,&quot;order&quot;,&quot;audit&quot;,&quot;advis&quot;,&quot;ve&quot;,&quot;dfs&quot;,&quot;precert&quot;,&quot;dseval&quot;,&quot;cm&quot;,&quot;permit&quot;,&quot;change&quot;,&quot;extend&quot;,&quot;report&quot;,&quot;subcon&quot;,&quot;safety&quot;,&quot;prefin&quot;,&quot;finish&quot;,&quot;evalx&quot;,&quot;safecert&quot;,&quot;demol&quot;,&quot;indirect&quot;,&quot;fmsafe&quot;,&quot;engord&quot;,&quot;cems&quot;,&quot;bfcert&quot;,&quot;sunday&quot;,&quot;quality&quot;,&quot;hinsur&quot;,&quot;postev&quot;],&quot;default&quot;:&quot;cycle&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showDetailIndex&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
 const KIND = {
   lead: { name:'선행', bd:'var(--divider)', rail:'var(--key-bg)', mark:'var(--a300)', idc:'var(--a700)' },
   key:  { name:'핵심', bd:'var(--divider)', rail:'var(--key-bg)', mark:'var(--a500)', idc:'var(--a700)' },
@@ -327,19 +327,19 @@ class Component extends DCLogic {
       const back = p.dataset.back === '1';
       if (!sel) {
         p.style.animation = 'none';
-        p.setAttribute('stroke-width', '1.4');
+        p.setAttribute('stroke-width', '0.9');
         p.setAttribute('stroke-dasharray', back ? '6 5' : 'none');
-        p.setAttribute('opacity', back ? '.45' : '.6');
+        p.setAttribute('opacity', back ? '.7' : '.6');
       } else if (lit) {
-        p.setAttribute('stroke-width', '2');
+        p.setAttribute('stroke-width', '1.4');
         p.setAttribute('stroke-dasharray', '7 6');
         p.setAttribute('opacity', '.62');
         p.style.animation = 'wfDash 4.4s linear infinite';
       } else {
         p.style.animation = 'none';
-        p.setAttribute('stroke-width', '1.4');
+        p.setAttribute('stroke-width', '0.9');
         p.setAttribute('stroke-dasharray', back ? '6 5' : 'none');
-        p.setAttribute('opacity', back ? '.45' : '.6');
+        p.setAttribute('opacity', back ? '.7' : '.6');
       }
     });
     Array.prototype.slice.call(svg.querySelectorAll('circle.mdot')).forEach(c => c.remove());
@@ -369,6 +369,7 @@ class Component extends DCLogic {
     const NS = 'http://www.w3.org/2000/svg';
     const cE = this.cssv('--edge', '#123f66'), cB = this.cssv('--edge-back', '#3b4045');
     svg.style.color = cE;
+    const slot = {}, take = k => { slot[k] = (slot[k] || 0) + 1; return slot[k] - 1; };
     (B.EDGES || []).forEach(e => {
       const a = board.querySelector('[data-node="' + e[0] + '"]');
       const b = board.querySelector('[data-node="' + e[1] + '"]');
@@ -376,22 +377,36 @@ class Component extends DCLogic {
       const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(), back = !!e[2];
       let d;
       if (Math.abs(ra.top - rb.top) < 8) {
-        const y = ra.top - br.top + ra.height / 2 + (back ? 12 : -6);
+        const base = Math.min(ra.top, rb.top) - br.top + ra.height / 2;
+        const i = take('h' + Math.round(Math.min(ra.top, rb.top)));
+        const y = base - 10 - i * 14;
         d = (rb.left > ra.left)
           ? 'M' + (ra.right - br.left + 2) + ',' + y + ' H' + (rb.left - br.left - 7)
           : 'M' + (ra.left - br.left - 2) + ',' + y + ' H' + (rb.right - br.left + 7);
       } else if (rb.top > ra.top) {
-        const x1 = ra.left - br.left + ra.width / 2, x2 = rb.left - br.left + rb.width / 2;
-        const my = (ra.bottom - br.top) + ((rb.top - br.top) - (ra.bottom - br.top)) / 2;
-        d = 'M' + x1 + ',' + (ra.bottom - br.top) + ' V' + my + ' H' + x2 + ' V' + (rb.top - br.top - 7);
+        const fi = take('f' + e[0]), ti = take('t' + e[1]);
+        const off = i => i === 0 ? 0 : (i % 2 ? Math.ceil(i / 2) * 9 : -Math.ceil(i / 2) * 9);
+        const x1 = ra.left - br.left + ra.width / 2 + off(fi);
+        const x2 = rb.left - br.left + rb.width / 2 + off(ti);
+        const y1 = ra.bottom - br.top, y2 = rb.top - br.top - 7;
+        if (Math.abs(x1 - x2) < 2 || y2 - y1 < 6) {
+          d = 'M' + x2 + ',' + y1 + ' V' + y2;
+        } else {
+          const ci = take('c' + Math.round(ra.bottom));
+          const mid = y1 + Math.max(8, (y2 - y1) / 2 + ci * 11);
+          const my = Math.max(y1 + 2, Math.min(y2 - 2, mid));
+          d = 'M' + x1 + ',' + y1 + ' V' + my + ' H' + x2 + ' V' + y2;
+        }
       } else {
-        const mx = br.width - 46;
-        d = 'M' + (ra.right - br.left + 2) + ',' + (ra.top - br.top + ra.height / 2) + ' H' + mx + ' V' + (rb.top - br.top + rb.height / 2) + ' H' + (rb.right - br.left + 7);
+        const i = take('r');
+        const mx = br.width - 46 + i * 9;
+        const y1 = ra.top - br.top + ra.height / 2 + (i % 2 ? 4 : -4);
+        d = 'M' + (ra.right - br.left + 2) + ',' + y1 + ' H' + mx + ' V' + (rb.top - br.top + rb.height / 2 + (i % 2 ? 4 : -4)) + ' H' + (rb.right - br.left + 7);
       }
       const p = document.createElementNS(NS, 'path');
       p.setAttribute('class', 'e'); p.setAttribute('d', d); p.setAttribute('fill', 'none');
-      p.setAttribute('stroke', back ? cB : cE); p.setAttribute('stroke-width', '1.4');
-      p.setAttribute('opacity', back ? '.45' : '.6'); p.setAttribute('marker-end', 'url(#wfar)');
+      p.setAttribute('stroke', back ? cB : cE); p.setAttribute('stroke-width', '0.9');
+      p.setAttribute('opacity', back ? '.7' : '.6'); p.setAttribute('marker-end', 'url(#wfar)');
       if (back) p.setAttribute('stroke-dasharray', '6 5');
       p.dataset.a = e[0]; p.dataset.b = e[1]; p.dataset.back = back ? '1' : '0';
       svg.appendChild(p);
