@@ -34,6 +34,44 @@
   .cat .t b { color:#0f766e; font-size:13px; }
   .ft { border-top:1px solid #d1d5db; margin-top:8px; padding-top:6px; font-size:11.5px; color:#9ca3af; text-align:center; }
 </style>
+<style>
+  @page{ size:A4 portrait; margin:0; }
+  :root{ --navy:#1E3A5F; --rust:#B45309; --line:#D1D5DB; --band:#EEF2F7; --chip-bg:#F1F5F9; --chip-line:#CBD5E1; --body:#37414F; --meta:#6B7280; --note:#9CA3AF; }
+  html,body{ margin:0; padding:0; background:#fff; font-family:'Noto Sans KR','Noto Sans CJK KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif; color:var(--body); -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .page{ width:210mm; max-width:none; min-height:297mm; margin:0 auto; padding:14mm 12mm; box-sizing:border-box; page-break-after:always; }
+  .page:last-child{ page-break-after:auto; }
+  .page + .page{ padding-top:14mm; }
+  .hd{ border-bottom:0.6mm solid var(--navy); padding-bottom:2mm; margin-bottom:3mm; }
+  .hd h1{ font-size:13.1pt; font-weight:800; color:var(--navy); letter-spacing:-0.015em; line-height:1.2; }
+  .hd .sub{ font-size:6pt; font-weight:400; color:var(--meta); margin-top:1.4mm; line-height:1.35; }
+  .grid{ gap:3.4mm; }
+  .box{ border:0.3mm solid var(--line); border-radius:1.2mm; padding:2mm 2.8mm 2.2mm; }
+  .box h2{ font-size:7.9pt; font-weight:700; color:#fff; background:var(--navy); display:inline-block; padding:0.8mm 2.2mm; border-radius:0.8mm; margin-bottom:1.4mm; letter-spacing:0; line-height:1.25; }
+  .box h2.accent{ background:var(--rust); }
+  p, li{ font-size:6.7pt; line-height:1.42; color:var(--body); }
+  li{ padding-left:2.4mm; margin-bottom:0.9mm; }
+  li::before{ color:var(--navy); font-weight:700; }
+  .k, .term{ color:var(--navy); font-weight:700; }
+  .r, .num{ color:var(--rust); font-weight:700; }
+  table{ margin-top:1.4mm; }
+  th, td{ border:0.25mm solid var(--chip-line); padding:1.2mm 1.6mm; font-size:6pt; }
+  th{ background:var(--band); color:var(--navy); font-weight:700; }
+  .cat .n{ background:var(--navy); border-radius:0.8mm; }
+  .cat .t{ font-size:6.7pt; line-height:1.42; }
+  .cat .t b{ color:var(--navy); font-size:6.7pt; }
+  .flow{ display:flex; flex-wrap:wrap; align-items:stretch; gap:1.4mm; }
+  .st{ background:var(--band); border-radius:1mm; padding:1.6mm 2.2mm; font-size:6pt; line-height:1.35; color:var(--navy); font-weight:600; }
+  .st b{ display:block; color:var(--navy); font-weight:700; margin-bottom:0.4mm; }
+  .st.hi{ background:var(--navy); color:#fff; }
+  .st.hi b{ color:#fff; }
+  .ar{ align-self:center; color:var(--meta); font-size:6pt; }
+  .sub2{ display:block; font-size:6pt; font-weight:500; color:var(--meta); margin-top:0.8mm; }
+  .tag{ display:inline-block; font-size:6pt; line-height:1.25; background:var(--chip-bg); border:0.25mm solid var(--chip-line); border-radius:1mm; padding:0.9mm 1.8mm; color:var(--body); margin:0 1.4mm 1.4mm 0; white-space:nowrap; }
+  .tag b{ color:var(--navy); font-weight:700; }
+  .ft{ border-top:0.25mm solid var(--line); margin-top:3mm; padding-top:1.8mm; font-size:5.7pt; line-height:1.4; color:var(--note); text-align:center; }
+  @media screen{ body{ background:#e5e7eb; } .page{ background:#fff; margin:6mm auto; box-shadow:0 1mm 3mm rgba(0,0,0,0.15); } }
+  @media print{ body{ background:#fff; } .page{ margin:0; box-shadow:none; } }
+</style>
 </head>
 <body>
 <div class="page">

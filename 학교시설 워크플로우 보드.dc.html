@@ -15,6 +15,7 @@
 <script src="data/wf_boards.js"></script>
 <script src="data/wf_tags.js"></script>
 <script src="data/wf_docs.js"></script>
+<script src="data/wf_canvas.js"></script>
 <style>
 [data-mode]{
   --bg:#fff; --panel:#fff; --text:#000000; --divider:rgba(0,0,0,.52);
@@ -151,7 +152,8 @@ a:hover{color:#164a75}
       <div ref="{{ boardRef }}" style="position:relative;min-width:1000px;border:1px solid var(--divider)">
         <svg ref="{{ svgRef }}" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible">
           <defs>
-            <marker id="wfar" markerWidth="7" markerHeight="7" refX="5.4" refY="2.4" orient="auto"><path d="M0,0 L5.6,2.4 L0,4.8 Z" fill="currentColor"></path></marker>
+            <marker id="wfar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="currentColor"></path></marker>
+            <marker id="wfarb" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path class="bhead" d="M0,0 L10,5 L0,10 Z" fill="currentColor"></path></marker>
           </defs>
         </svg>
 
@@ -196,6 +198,41 @@ a:hover{color:#164a75}
         </div>
       </div>
       </div>
+
+      <sc-if value="{{ hasCanvas }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:30px">
+          <div style="display:flex;align-items:baseline;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--divider)">
+            <span style="font-family:var(--head);font-size:22px;font-weight:600">한 장 요약</span>
+            <span style="font-size:11.5px;letter-spacing:.1em;font-family:var(--head);color:var(--faint)">MONEY · DOCUMENTS · IMPROVEMENT · RELATED</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:var(--divider);border:1px solid var(--divider);margin-top:14px">
+            <div style="background:var(--panel);padding:16px 18px">
+              <div style="font-family:var(--head);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)">돈의 흐름</div>
+              <p style="margin:8px 0 0;font-size:12.5px;line-height:1.7;color:var(--muted);text-wrap:pretty">{{ cvMoney }}</p>
+            </div>
+            <div style="background:var(--panel);padding:16px 18px">
+              <div style="font-family:var(--head);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)">문서 · 데이터 흐름</div>
+              <p style="margin:8px 0 0;font-size:12.5px;line-height:1.7;color:var(--muted);text-wrap:pretty">{{ cvDocs }}</p>
+            </div>
+            <div style="background:var(--key-bg);padding:16px 18px">
+              <div style="font-family:var(--head);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--a700)">개선 포인트</div>
+              <div style="display:flex;flex-direction:column;gap:7px;margin-top:9px">
+                <sc-for list="{{ cvReform }}" as="r" hint-placeholder-count="3">
+                  <div style="display:flex;gap:8px;font-size:12.5px;line-height:1.55;color:var(--text)"><b style="font-family:var(--head);color:var(--a500);flex:0 0 auto">{{ r.n }}</b><span>{{ r.t }}</span></div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background:var(--panel);padding:16px 18px">
+              <div style="font-family:var(--head);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)">관련 보드</div>
+              <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:9px">
+                <sc-for list="{{ cvRel }}" as="rl" hint-placeholder-count="4">
+                  <button type="button" onClick="{{ rl.go }}" style="font:inherit;font-size:12px;font-weight:600;color:var(--a700);background:transparent;border:1px solid var(--a700);padding:5px 11px;cursor:pointer" style-hover="color:#fff;background:var(--a700)">{{ rl.name }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
 
       <sc-if value="{{ showIndex }}" hint-placeholder-val="{{ true }}">
         <div style="margin-top:30px">
@@ -258,7 +295,7 @@ a:hover{color:#164a75}
 </div>
 
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;defaultBoard&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;cycle&quot;,&quot;pre&quot;,&quot;pubrev&quot;,&quot;contest&quot;,&quot;bid&quot;,&quot;order&quot;,&quot;audit&quot;,&quot;advis&quot;,&quot;ve&quot;,&quot;dfs&quot;,&quot;precert&quot;,&quot;dseval&quot;,&quot;cm&quot;,&quot;permit&quot;,&quot;change&quot;,&quot;extend&quot;,&quot;report&quot;,&quot;subcon&quot;,&quot;safety&quot;,&quot;prefin&quot;,&quot;finish&quot;,&quot;evalx&quot;,&quot;safecert&quot;,&quot;demol&quot;,&quot;indirect&quot;,&quot;fmsafe&quot;,&quot;engord&quot;,&quot;cems&quot;,&quot;bfcert&quot;,&quot;sunday&quot;,&quot;quality&quot;,&quot;hinsur&quot;,&quot;postev&quot;],&quot;default&quot;:&quot;cycle&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showDetailIndex&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultBoard&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;cycle&quot;,&quot;pre&quot;,&quot;pubrev&quot;,&quot;contest&quot;,&quot;bid&quot;,&quot;order&quot;,&quot;audit&quot;,&quot;advis&quot;,&quot;ve&quot;,&quot;dfs&quot;,&quot;precert&quot;,&quot;dseval&quot;,&quot;cm&quot;,&quot;permit&quot;,&quot;change&quot;,&quot;extend&quot;,&quot;report&quot;,&quot;subcon&quot;,&quot;safety&quot;,&quot;prefin&quot;,&quot;finish&quot;,&quot;evalx&quot;,&quot;safecert&quot;,&quot;demol&quot;,&quot;demolrev&quot;,&quot;indirect&quot;,&quot;fmsafe&quot;,&quot;engord&quot;,&quot;cems&quot;,&quot;bfcert&quot;,&quot;sunday&quot;,&quot;quality&quot;,&quot;hinsur&quot;,&quot;postev&quot;],&quot;default&quot;:&quot;cycle&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showDetailIndex&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
 const KIND = {
   lead: { name:'선행', bd:'var(--divider)', rail:'var(--key-bg)', mark:'var(--a300)', idc:'var(--a700)' },
   key:  { name:'핵심', bd:'var(--divider)', rail:'var(--key-bg)', mark:'var(--a500)', idc:'var(--a700)' },
@@ -319,6 +356,26 @@ class Component extends DCLogic {
   board() { return (window.WF_BOARDS && this.state.key) ? window.WF_BOARDS[this.state.key] : null; }
   cssv(n, f) { const el = this.boardRef && this.boardRef.current; if (!el) return f; const v = getComputedStyle(el).getPropertyValue(n).trim(); return v || f; }
 
+  rp(pts, r) {
+    if (!pts || pts.length < 2) return '';
+    let d = 'M ' + pts[0][0] + ' ' + pts[0][1];
+    for (let i = 1; i < pts.length - 1; i++) {
+      const px = pts[i - 1][0], py = pts[i - 1][1];
+      const cx = pts[i][0], cy = pts[i][1];
+      const nx = pts[i + 1][0], ny = pts[i + 1][1];
+      const inLen = Math.hypot(cx - px, cy - py), outLen = Math.hypot(nx - cx, ny - cy);
+      const rr = Math.min(r, inLen / 2, outLen / 2);
+      if (rr < 1) { d += ' L ' + cx + ' ' + cy; continue; }
+      const ix = cx - Math.sign(cx - px) * rr * (cx !== px ? 1 : 0);
+      const iy = cy - Math.sign(cy - py) * rr * (cy !== py ? 1 : 0);
+      const ox = cx + Math.sign(nx - cx) * rr * (nx !== cx ? 1 : 0);
+      const oy = cy + Math.sign(ny - cy) * rr * (ny !== cy ? 1 : 0);
+      d += ' L ' + ix + ' ' + iy + ' Q ' + cx + ' ' + cy + ' ' + ox + ' ' + oy;
+    }
+    const last = pts[pts.length - 1];
+    return d + ' L ' + last[0] + ' ' + last[1];
+  }
+
   relight() {
     const svg = this.svgRef && this.svgRef.current; if (!svg) return;
     const sel = this.active();
@@ -327,19 +384,19 @@ class Component extends DCLogic {
       const back = p.dataset.back === '1';
       if (!sel) {
         p.style.animation = 'none';
-        p.setAttribute('stroke-width', '0.9');
-        p.setAttribute('stroke-dasharray', back ? '6 5' : 'none');
-        p.setAttribute('opacity', back ? '.7' : '.6');
+        p.setAttribute('stroke-width', '1.2');
+        p.setAttribute('stroke-dasharray', back ? '5 4' : 'none');
+        p.setAttribute('opacity', back ? '.8' : '.72');
       } else if (lit) {
-        p.setAttribute('stroke-width', '1.4');
+        p.setAttribute('stroke-width', '1.8');
         p.setAttribute('stroke-dasharray', '7 6');
-        p.setAttribute('opacity', '.62');
+        p.setAttribute('opacity', '.9');
         p.style.animation = 'wfDash 4.4s linear infinite';
       } else {
         p.style.animation = 'none';
-        p.setAttribute('stroke-width', '0.9');
-        p.setAttribute('stroke-dasharray', back ? '6 5' : 'none');
-        p.setAttribute('opacity', back ? '.7' : '.6');
+        p.setAttribute('stroke-width', '1.2');
+        p.setAttribute('stroke-dasharray', back ? '5 4' : 'none');
+        p.setAttribute('opacity', back ? '.34' : '.28');
       }
     });
     Array.prototype.slice.call(svg.querySelectorAll('circle.mdot')).forEach(c => c.remove());
@@ -369,48 +426,133 @@ class Component extends DCLogic {
     const NS = 'http://www.w3.org/2000/svg';
     const cE = this.cssv('--edge', '#123f66'), cB = this.cssv('--edge-back', '#3b4045');
     svg.style.color = cE;
-    const slot = {}, take = k => { slot[k] = (slot[k] || 0) + 1; return slot[k] - 1; };
-    (B.EDGES || []).forEach(e => {
-      const a = board.querySelector('[data-node="' + e[0] + '"]');
-      const b = board.querySelector('[data-node="' + e[1] + '"]');
-      if (!a || !b) return;
-      const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(), back = !!e[2];
-      let d;
-      if (Math.abs(ra.top - rb.top) < 8) {
-        const base = Math.min(ra.top, rb.top) - br.top + ra.height / 2;
-        const i = take('h' + Math.round(Math.min(ra.top, rb.top)));
-        const y = base - 10 - i * 14;
-        d = (rb.left > ra.left)
-          ? 'M' + (ra.right - br.left + 2) + ',' + y + ' H' + (rb.left - br.left - 7)
-          : 'M' + (ra.left - br.left - 2) + ',' + y + ' H' + (rb.right - br.left + 7);
-      } else if (rb.top > ra.top) {
-        const fi = take('f' + e[0]), ti = take('t' + e[1]);
-        const off = i => i === 0 ? 0 : (i % 2 ? Math.ceil(i / 2) * 9 : -Math.ceil(i / 2) * 9);
-        const x1 = ra.left - br.left + ra.width / 2 + off(fi);
-        const x2 = rb.left - br.left + rb.width / 2 + off(ti);
-        const y1 = ra.bottom - br.top, y2 = rb.top - br.top - 7;
-        if (Math.abs(x1 - x2) < 2 || y2 - y1 < 6) {
-          d = 'M' + x2 + ',' + y1 + ' V' + y2;
-        } else {
-          const ci = take('c' + Math.round(ra.bottom));
-          const mid = y1 + Math.max(8, (y2 - y1) / 2 + ci * 11);
-          const my = Math.max(y1 + 2, Math.min(y2 - 2, mid));
-          d = 'M' + x1 + ',' + y1 + ' V' + my + ' H' + x2 + ' V' + y2;
+    const bh = svg.querySelector('path.bhead'); if (bh) bh.setAttribute('fill', cB);
+    const R = {};
+    (B.NODES || []).forEach(n => {
+      const el = board.querySelector('[data-node="' + n.id + '"]');
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      R[n.id] = { left: r.left - br.left, right: r.right - br.left, top: r.top - br.top, bottom: r.bottom - br.top,
+        cx: r.left - br.left + r.width / 2, cy: r.top - br.top + r.height / 2 };
+    });
+    const ids = Object.keys(R);
+    const list = (B.EDGES || []).map(e => {
+      const a = R[e[0]], b = R[e[1]];
+      if (!a || !b) return null;
+      const back = !!e[2];
+      const sameCol = Math.abs(a.left - b.left) < 8;
+      const dir = sameCol ? 'same' : (b.left > a.right ? 'fwd' : 'back');
+      return { s: e[0], t: e[1], back, a, b, dir,
+        outKey: e[0] + ':' + (dir === 'back' ? 'L' : 'R'),
+        inKey: e[1] + ':' + (dir === 'fwd' ? 'L' : 'R') };
+    }).filter(Boolean);
+
+    const clearV = (ed, x) => {
+      const y1 = Math.min(ed.a.bottom, ed.b.bottom), y2 = Math.max(ed.a.top, ed.b.top);
+      for (let i = 0; i < ids.length; i++) {
+        const id = ids[i]; if (id === ed.s || id === ed.t) continue;
+        const r = R[id];
+        if (r.left < x && x < r.right && r.top < y2 && r.bottom > y1) return false;
+      }
+      return true;
+    };
+    list.forEach(ed => { ed.vert = ed.dir === 'same' && !ed.back && clearV(ed, ed.b.cx); });
+
+    const cnt = {}, seen = {};
+    list.forEach(ed => {
+      if (ed.vert) return;
+      cnt[ed.outKey] = (cnt[ed.outKey] || 0) + 1;
+      cnt[ed.inKey] = (cnt[ed.inKey] || 0) + 1;
+    });
+    const spread = (key, cy, top, bottom) => {
+      const n = cnt[key]; if (!n || n <= 1) return cy;
+      const i = seen[key] = (seen[key] == null ? 0 : seen[key] + 1);
+      const gap = Math.min(13, Math.max(7, (bottom - top - 10) / n));
+      return cy + (i - (n - 1) / 2) * gap;
+    };
+    const gut = {}, nudge = x => {
+      const k = Math.round(x / 8), n = gut[k] || 0; gut[k] = n + 1;
+      return x + (n % 2 === 0 ? 1 : -1) * Math.ceil(n / 2) * 7;
+    };
+    const gutY = {}, nudgeY = y => {
+      const k = Math.round(y / 8), n = gutY[k] || 0; gutY[k] = n + 1;
+      return y + (n % 2 === 0 ? 1 : -1) * Math.ceil(n / 2) * 6;
+    };
+
+    // 레인·단계 밴드 → 카드 사이 거터(빈 통로) 좌표
+    const bandsOf = (ga, gb) => {
+      const arr = ids.map(id => ({ a: ga(R[id]), b: gb(R[id]) })).sort((p, q) => p.a - q.a), out = [];
+      arr.forEach(v => {
+        const last = out[out.length - 1];
+        if (last && v.a - last.a < 10) last.b = Math.max(last.b, v.b); else out.push({ a: v.a, b: v.b });
+      });
+      return out;
+    };
+    const cols = bandsOf(r => r.left, r => r.right), rows = bandsOf(r => r.top, r => r.bottom);
+    const bandIdx = (bands, v) => { let k = 0, d = 1e9; bands.forEach((bb, i) => { const t = Math.abs(bb.a - v); if (t < d) { d = t; k = i; } }); return k; };
+    const gapBefore = (bands, i, fb) => i > 0 ? (bands[i - 1].b + bands[i].a) / 2 : bands[i].a - fb;
+    const gapAfter = (bands, i, fb) => i < bands.length - 1 ? (bands[i].b + bands[i + 1].a) / 2 : bands[i].b + fb;
+
+    // 무관한 카드를 관통하는 구간 수 (0이 목표)
+    const pierce = (pts, s, t) => {
+      let c = 0;
+      for (let i = 0; i < pts.length - 1; i++) {
+        const x1 = Math.min(pts[i][0], pts[i + 1][0]), x2 = Math.max(pts[i][0], pts[i + 1][0]);
+        const y1 = Math.min(pts[i][1], pts[i + 1][1]), y2 = Math.max(pts[i][1], pts[i + 1][1]);
+        for (let j = 0; j < ids.length; j++) {
+          const id = ids[j]; if (id === s || id === t) continue;
+          const r = R[id];
+          if (r.left + 3 < x2 && r.right - 3 > x1 && r.top + 3 < y2 && r.bottom - 3 > y1) { c++; break; }
         }
+      }
+      return c;
+    };
+
+    list.forEach(ed => {
+      const a = ed.a, b = ed.b;
+      let pts;
+      if (ed.vert) {
+        const x = b.cx, down = b.top > a.bottom;
+        pts = down ? [[x, a.bottom], [x, b.top - 6]] : [[x, a.top], [x, b.bottom + 6]];
       } else {
-        const i = take('r');
-        const mx = br.width - 46 + i * 9;
-        const y1 = ra.top - br.top + ra.height / 2 + (i % 2 ? 4 : -4);
-        d = 'M' + (ra.right - br.left + 2) + ',' + y1 + ' H' + mx + ' V' + (rb.top - br.top + rb.height / 2 + (i % 2 ? 4 : -4)) + ' H' + (rb.right - br.left + 7);
+        const sy = spread(ed.outKey, a.cy, a.top, a.bottom);
+        const ty = spread(ed.inKey, b.cy, b.top, b.bottom);
+        const ca = bandIdx(cols, a.left), cb = bandIdx(cols, b.left);
+        const ra = bandIdx(rows, a.top), rb = bandIdx(rows, b.top);
+        const rlo = Math.min(ra, rb), rhi = Math.max(ra, rb);
+        const gy = nudgeY(rhi > rlo ? gapBefore(rows, rhi, 16) : gapAfter(rows, rhi, 16));
+        const cands = [];
+        if (ed.dir === 'fwd') {
+          const gxT = nudge(gapBefore(cols, cb, 15)), gxS = nudge(gapAfter(cols, ca, 15));
+          if (Math.abs(sy - ty) < 2) cands.push([[a.right, sy], [b.left - 6, ty]]);
+          cands.push([[a.right, sy], [gxT, sy], [gxT, ty], [b.left - 6, ty]]);
+          cands.push([[a.right, sy], [gxS, sy], [gxS, ty], [b.left - 6, ty]]);
+          cands.push([[a.right, sy], [gxS, sy], [gxS, gy], [gxT, gy], [gxT, ty], [b.left - 6, ty]]);
+        } else if (ed.dir === 'back') {
+          const gxT = nudge(gapBefore(cols, cb, 15)), gxS = nudge(gapBefore(cols, ca, 15));
+          cands.push([[a.left, sy], [gxT, sy], [gxT, ty], [b.left - 6, ty]]);
+          cands.push([[a.left, sy], [gxS, sy], [gxS, gy], [gxT, gy], [gxT, ty], [b.left - 6, ty]]);
+        } else {
+          const gxS = nudge(gapAfter(cols, ca, 17));
+          cands.push([[a.right, sy], [gxS, sy], [gxS, ty], [b.right + 6, ty]]);
+          cands.push([[a.right, sy], [gxS, sy], [gxS, gy], [gxS, gy], [gxS, ty], [b.right + 6, ty]]);
+        }
+        let bp = cands[0], bc = 1e9;
+        for (let i = 0; i < cands.length; i++) {
+          const p = pierce(cands[i], ed.s, ed.t);
+          if (p < bc) { bc = p; bp = cands[i]; if (p === 0) break; }
+        }
+        pts = bp;
       }
       const p = document.createElementNS(NS, 'path');
-      p.setAttribute('class', 'e'); p.setAttribute('d', d); p.setAttribute('fill', 'none');
-      p.setAttribute('stroke', back ? cB : cE); p.setAttribute('stroke-width', '0.9');
-      p.setAttribute('opacity', back ? '.7' : '.6'); p.setAttribute('marker-end', 'url(#wfar)');
-      if (back) p.setAttribute('stroke-dasharray', '6 5');
-      p.dataset.a = e[0]; p.dataset.b = e[1]; p.dataset.back = back ? '1' : '0';
+      p.setAttribute('class', 'e'); p.setAttribute('d', this.rp(pts, 9)); p.setAttribute('fill', 'none');
+      p.setAttribute('stroke', ed.back ? cB : cE); p.setAttribute('stroke-width', '1.2');
+      p.setAttribute('stroke-linecap', 'round'); p.setAttribute('stroke-linejoin', 'round');
+      p.setAttribute('opacity', ed.back ? '.8' : '.72');
+      p.setAttribute('marker-end', ed.back ? 'url(#wfarb)' : 'url(#wfar)');
+      if (ed.back) p.setAttribute('stroke-dasharray', '5 4');
+      p.dataset.a = ed.s; p.dataset.b = ed.t; p.dataset.back = ed.back ? '1' : '0';
       svg.appendChild(p);
-
     });
     this.relight();
   }
@@ -495,7 +637,7 @@ class Component extends DCLogic {
           mark: on ? 'inset 3px 0 0 var(--a500)' : 'none' };
       })
     };
-    if (!B) return Object.assign(base, { rows: [], laneHead: [], stats: [], tags: [], panelT: 'translateY(110%)' });
+    if (!B) return Object.assign(base, { rows: [], laneHead: [], stats: [], tags: [], panelT: 'translateY(110%)', hasCanvas: false, cvReform: [], cvRel: [] });
 
     const sel = this.active();
     const rows = B.STAGES.map((st, si) => ({
@@ -524,8 +666,13 @@ class Component extends DCLogic {
     const back = (B.EDGES || []).filter(e => !!e[2]).length;
     const sn = this.state.sel ? B.NODES.filter(n => n.id === this.state.sel)[0] : null;
 
+    const cv = (window.WF_CANVAS || {})[this.state.key] || null;
     return Object.assign(base, {
       kick: B.kick, title: B.title, sub: B.sub,
+      hasCanvas: !!cv,
+      cvMoney: cv ? cv.money : '', cvDocs: cv ? cv.docs : '',
+      cvReform: cv ? (cv.reform || []).map((t, i) => ({ n: '0' + (i + 1), t })) : [],
+      cvRel: cv ? (cv.rel || []).filter(k => window.WF_BOARDS && window.WF_BOARDS[k]).map(k => ({ name: NM[k] || k, go: () => this.pick(k) })) : [],
       lawRef: (B.right || '').replace(/<[^>]+>/g, ' ').replace('기준 법령', '').trim(),
       tags: (window.WF_TAGS && window.WF_TAGS[this.state.key]) || [],
       docs: (((window.WF_BOARDDOC || {})[this.state.key]) || []).map(d => ({ f: d.f, t: d.t })),

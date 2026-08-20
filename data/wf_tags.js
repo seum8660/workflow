@@ -3,7 +3,7 @@
    - WF_BOARDNM  : 보드 키 → 보드 이름
    - WF_GRAPH  : 그래프 뷰(2D·3D)에 합칠 노드/링크
 */
-var WF_BOARDNM={cycle:'프로세스(Process)',change:'설계변경',extend:'공기연장',cm:'감리방식',safety:'안전사고',permit:'인허가',evalx:'엔지니어링평가',pre:'사전기획 적정성검토',pubrev:'공공건축심의',contest:'설계공모 운영',bid:'설계 입찰공고',order:'설계용역 발주',audit:'일상감사',advis:'기술자문위원회',ve:'설계경제성검토(VE)',dfsrun:'건설공사 안전관리 업무수행',dfs:'설계안전성검토',precert:'예비인증 신청',dseval:'설계용역 평가',safecert:'교육시설 안전인증',report:'실정보고',prefin:'예비준공검사',finish:'준공검사',demol:'해체계획서 작성·검토',indirect:'공기연장 간접공사비',fmsafe:'시설물 안전·유지관리',subcon:'건설공사 하도급 심사',quality:'건설공사 품질관리',hinsur:'건설공사 사후정산',postev:'건설공사 사후평가',engord:'엔지니어링사업 발주',cems:'CEMS 실적 등재',bfcert:'BF 인증',sunday:'일요일 휴무제'};
+var WF_BOARDNM={cycle:'프로세스(Process)',change:'설계변경',extend:'공기연장',cm:'감리방식',safety:'안전사고',permit:'인허가',evalx:'엔지니어링평가',pre:'사전기획 적정성검토',pubrev:'공공건축심의',contest:'설계공모 운영',bid:'설계 입찰공고',order:'설계용역 발주',audit:'일상감사',advis:'기술자문위원회',ve:'설계경제성검토(VE)',dfsrun:'건설공사 안전관리 업무수행',dfs:'설계안전성검토',precert:'예비인증 신청',dseval:'설계용역 평가',safecert:'교육시설 안전인증',report:'실정보고',prefin:'예비준공검사',finish:'준공검사',demol:'해체계획서 작성·검토',demolrev:'해체계획서 검토 사례집',indirect:'공기연장 간접공사비',fmsafe:'시설물 안전·유지관리',subcon:'건설공사 하도급 심사',quality:'건설공사 품질관리',hinsur:'건설공사 사후정산',postev:'건설공사 사후평가',engord:'엔지니어링사업 발주',cems:'CEMS 실적 등재',bfcert:'BF 인증',sunday:'일요일 휴무제'};
 
 var WF_TAGS={
   cycle:['PROCESS','사전기획','설계','발주','준공검사'],
@@ -30,6 +30,7 @@ var WF_TAGS={
   evalx:['시공평가','건설엔지니어링','CSI'],
   safecert:['교육시설 안전인증','교육시설법','최우수등급'],
   demol:['해체계획서','해체공사','석면'],
+  demolrev:['해체계획서검토','건축물관리법','국토안전관리원','해체감리','구조안전'],
   indirect:['간접공사비','공기연장','실비정산'],
   fmsafe:['시설물안전법','정기안전점검','제3종시설물'],
   subcon:['하도급','하도급심사','하도급율','부대입찰','건설산업기본법'],
@@ -48,7 +49,7 @@ var WF_PHASE={
   order:'phase:design',audit:'phase:design',advis:'phase:design',ve:'phase:design',dfs:'phase:design',dfsrun:'phase:design',
   precert:'phase:design',dseval:'phase:design',cm:'phase:cm',permit:'phase:plan',change:'phase:const',
   extend:'phase:const',report:'phase:const',safety:'phase:const',prefin:'phase:comp',finish:'phase:comp',
-  evalx:'phase:comp',safecert:'phase:comp',demol:'phase:const',indirect:'phase:const',fmsafe:'phase:comp',subcon:'phase:const',quality:'phase:const',hinsur:'phase:const',postev:'phase:comp',engord:'phase:design',cems:'phase:cm',bfcert:'phase:design',sunday:'phase:const'
+  evalx:'phase:comp',safecert:'phase:comp',demol:'phase:const',demolrev:'phase:const',indirect:'phase:const',fmsafe:'phase:comp',subcon:'phase:const',quality:'phase:const',hinsur:'phase:const',postev:'phase:comp',engord:'phase:design',cems:'phase:cm',bfcert:'phase:design',sunday:'phase:const'
 };
 
 window.WF_GRAPH=(function(){
