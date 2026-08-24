@@ -456,7 +456,15 @@ class Component extends DCLogic {
       }
       return true;
     };
-    list.forEach(ed => { ed.vert = ed.dir === 'same' && !ed.back && clearV(ed, ed.b.cx); });
+    list.forEach(ed => {
+      ed.vert = false; ed.vcands = [];
+      if (ed.dir !== 'same' || ed.back) return;
+      const lo = Math.max(ed.a.left, ed.b.left) + 14, hi = Math.min(ed.a.right, ed.b.right) - 14;
+      [ed.b.cx, ed.b.cx - 28, ed.b.cx + 28, lo, hi].forEach(x => {
+        if (x >= lo && x <= hi && clearV(ed, x) && !ed.vcands.some(v => Math.abs(v - x) < 6)) ed.vcands.push(x);
+      });
+      ed.vert = ed.vcands.length > 0;
+    });
 
     const cnt = {}, seen = {};
     list.forEach(ed => {
@@ -467,16 +475,20 @@ class Component extends DCLogic {
     const spread = (key, cy, top, bottom) => {
       const n = cnt[key]; if (!n || n <= 1) return cy;
       const i = seen[key] = (seen[key] == null ? 0 : seen[key] + 1);
-      const gap = Math.min(13, Math.max(7, (bottom - top - 10) / n));
+      const gap = Math.min(22, Math.max(15, (bottom - top - 14) / n));
       return cy + (i - (n - 1) / 2) * gap;
     };
-    const gut = {}, nudge = x => {
-      const k = Math.round(x / 8), n = gut[k] || 0; gut[k] = n + 1;
-      return x + (n % 2 === 0 ? 1 : -1) * Math.ceil(n / 2) * 7;
-    };
-    const gutY = {}, nudgeY = y => {
-      const k = Math.round(y / 8), n = gutY[k] || 0; gutY[k] = n + 1;
-      return y + (n % 2 === 0 ? 1 : -1) * Math.ceil(n / 2) * 6;
+    // 이미 그린 구간 대장 — 선끼리 겹치지 않게 통로를 나눠 쓴다
+    const vSeg = [], hSeg = [];
+    const clashV = (x, y1, y2) => vSeg.some(s => Math.abs(s.x - x) < 6.5 && Math.min(s.y2, y2) - Math.max(s.y1, y1) > 8);
+    const clashH = (y, x1, x2) => hSeg.some(s => Math.abs(s.y - y) < 6.5 && Math.min(s.x2, x2) - Math.max(s.x1, x1) > 8);
+    const OFFS = [0, 7, -7, 14, -14, 21, -21, 28, -28, 35, -35, 42, -42];
+    const register = pts => {
+      for (let i = 0; i + 1 < pts.length; i++) {
+        const A = pts[i], C = pts[i + 1];
+        if (Math.abs(A[0] - C[0]) < 1.5) vSeg.push({ x: A[0], y1: Math.min(A[1], C[1]), y2: Math.max(A[1], C[1]) });
+        else if (Math.abs(A[1] - C[1]) < 1.5) hSeg.push({ y: A[1], x1: Math.min(A[0], C[0]), x2: Math.max(A[0], C[0]) });
+      }
     };
 
     // 레인·단계 밴드 → 카드 사이 거터(빈 통로) 좌표
@@ -484,7 +496,8 @@ class Component extends DCLogic {
       const arr = ids.map(id => ({ a: ga(R[id]), b: gb(R[id]) })).sort((p, q) => p.a - q.a), out = [];
       arr.forEach(v => {
         const last = out[out.length - 1];
-        if (last && v.a - last.a < 10) last.b = Math.max(last.b, v.b); else out.push({ a: v.a, b: v.b });
+        if (last && (v.a - last.a < 10 || v.a < last.b - 6)) last.b = Math.max(last.b, v.b);
+        else out.push({ a: v.a, b: v.b });
       });
       return out;
     };
@@ -508,42 +521,149 @@ class Component extends DCLogic {
       return c;
     };
 
+    // 카드 사이 통로(거터)만 지나는 격자 경로 탐색 — 회전 패널티 있는 다익스트라
+    const XS = [];
+    cols.forEach((c, i) => { if (i) XS.push((cols[i - 1].b + c.a) / 2); });
+    XS.push(cols[0].a - 17, cols[cols.length - 1].b + 17);
+    XS.sort((p, q) => p - q);
+    const YS = [];
+    rows.forEach((r, i) => { if (i) YS.push((rows[i - 1].b + r.a) / 2); });
+    YS.push(rows[0].a - 15, rows[rows.length - 1].b + 15);
+    const clear = (x1, y1, x2, y2, s, t) => {
+      const ax = Math.min(x1, x2), bx = Math.max(x1, x2), ay = Math.min(y1, y2), by = Math.max(y1, y2);
+      for (let j = 0; j < ids.length; j++) {
+        const id = ids[j]; if (id === s || id === t) continue;
+        const r = R[id];
+        if (r.left + 3 < bx && r.right - 3 > ax && r.top + 3 < by && r.bottom - 3 > ay) return false;
+      }
+      return true;
+    };
+    const route = (sx, sy, tx, ty, s, t) => {
+      const Y = YS.concat([sy, ty]).sort((p, q) => p - q);
+      const si = Y.indexOf(sy), ti = Y.indexOf(ty);
+      const N = XS.length, M = Y.length, TURN = 44;
+      const dd = {}, pv = {}, seen = {}, q = [];
+      const kk = (i, j, d) => i + ',' + j + ',' + d;
+      for (let i = 0; i < N; i++) {
+        if (!clear(sx, sy, XS[i], sy, s, t)) continue;
+        const k = kk(i, si, 0); dd[k] = Math.abs(XS[i] - sx); pv[k] = null; q.push(k);
+      }
+      let best = null, bestC = 1e9;
+      while (q.length) {
+        let bi = 0;
+        for (let i = 1; i < q.length; i++) if (dd[q[i]] < dd[q[bi]]) bi = i;
+        const k = q.splice(bi, 1)[0];
+        if (seen[k]) continue;
+        seen[k] = 1;
+        const p = k.split(','), i = +p[0], j = +p[1], d = +p[2], c = dd[k];
+        if (c >= bestC) continue;
+        if (j === ti && clear(XS[i], ty, tx, ty, s, t)) {
+          const tc = c + Math.abs(tx - XS[i]) + (d === 0 ? 0 : TURN);
+          if (tc < bestC) { bestC = tc; best = k; }
+        }
+        const nb = [];
+        if (i > 0) nb.push([i - 1, j, 0, XS[i] - XS[i - 1]]);
+        if (i < N - 1) nb.push([i + 1, j, 0, XS[i + 1] - XS[i]]);
+        if (j > 0) nb.push([i, j - 1, 1, Y[j] - Y[j - 1]]);
+        if (j < M - 1) nb.push([i, j + 1, 1, Y[j + 1] - Y[j]]);
+        for (let z = 0; z < nb.length; z++) {
+          const n = nb[z];
+          const ok = n[2] === 0 ? clear(XS[i], Y[j], XS[n[0]], Y[j], s, t) : clear(XS[i], Y[j], XS[i], Y[n[1]], s, t);
+          if (!ok) continue;
+          const nk = kk(n[0], n[1], n[2]), nc = c + n[3] + (n[2] === d ? 0 : TURN);
+          if (dd[nk] == null || nc < dd[nk]) { dd[nk] = nc; pv[nk] = k; q.push(nk); }
+        }
+      }
+      if (best == null) return null;
+      const raw = [];
+      let k = best;
+      while (k) { const p = k.split(','); raw.unshift([XS[+p[0]], Y[+p[1]]]); k = pv[k]; }
+      raw.unshift([sx, sy]); raw.push([tx, ty]);
+      const uniq = [];
+      raw.forEach(pt => { const l = uniq[uniq.length - 1]; if (!l || Math.abs(l[0] - pt[0]) > 0.5 || Math.abs(l[1] - pt[1]) > 0.5) uniq.push(pt); });
+      if (uniq.length < 2) return null;
+      const fin = [uniq[0]];
+      for (let i = 1; i < uniq.length - 1; i++) {
+        const p0 = fin[fin.length - 1], p1 = uniq[i], p2 = uniq[i + 1];
+        const col = (Math.abs(p0[0] - p1[0]) < 0.5 && Math.abs(p1[0] - p2[0]) < 0.5) || (Math.abs(p0[1] - p1[1]) < 0.5 && Math.abs(p1[1] - p2[1]) < 0.5);
+        if (!col) fin.push(p1);
+      }
+      fin.push(uniq[uniq.length - 1]);
+      return fin;
+    };
+
     list.forEach(ed => {
       const a = ed.a, b = ed.b;
       let pts;
       if (ed.vert) {
-        const x = b.cx, down = b.top > a.bottom;
-        pts = down ? [[x, a.bottom], [x, b.top - 6]] : [[x, a.top], [x, b.bottom + 6]];
+        let x = ed.vcands[0];
+        const y1 = Math.min(a.bottom, b.top), y2 = Math.max(a.bottom, b.top);
+        for (let i = 0; i < ed.vcands.length; i++) { if (!clashV(ed.vcands[i], y1, y2)) { x = ed.vcands[i]; break; } }
+        const down = b.top > a.bottom;
+        pts = down ? [[x, a.bottom], [x, b.top - 2]] : [[x, a.top], [x, b.bottom + 2]];
       } else {
-        const sy = spread(ed.outKey, a.cy, a.top, a.bottom);
-        const ty = spread(ed.inKey, b.cy, b.top, b.bottom);
+        let sy = spread(ed.outKey, a.cy, a.top, a.bottom);
+        let ty = spread(ed.inKey, b.cy, b.top, b.bottom);
+        // 노드 진입·진산 스텅도 기족 수평선과 붙지 않게 밀기(노드 변 안에서만)
+        const stub = (y, x1, x2, top, bottom) => {
+          if (!clashH(y, x1, x2)) return y;
+          for (let j = 1; j < OFFS.length; j++) {
+            const v = y + OFFS[j];
+            if (v < top + 9 || v > bottom - 9) continue;
+            if (!clashH(v, x1, x2)) return v;
+          }
+          return y;
+        };
+        sy = stub(sy, ed.dir === 'back' ? a.left - 44 : a.right, ed.dir === 'back' ? a.left : a.right + 44, a.top, a.bottom);
+        ty = stub(ty, ed.dir === 'same' ? b.right : b.left - 44, ed.dir === 'same' ? b.right + 44 : b.left, b.top, b.bottom);
         const ca = bandIdx(cols, a.left), cb = bandIdx(cols, b.left);
         const ra = bandIdx(rows, a.top), rb = bandIdx(rows, b.top);
         const rlo = Math.min(ra, rb), rhi = Math.max(ra, rb);
-        const gy = nudgeY(rhi > rlo ? gapBefore(rows, rhi, 16) : gapAfter(rows, rhi, 16));
+        const gy = rhi > rlo ? gapBefore(rows, rhi, 16) : gapAfter(rows, rhi, 16);
         const cands = [];
         if (ed.dir === 'fwd') {
-          const gxT = nudge(gapBefore(cols, cb, 15)), gxS = nudge(gapAfter(cols, ca, 15));
+          const gxT = gapBefore(cols, cb, 15), gxS = gapAfter(cols, ca, 15);
           if (Math.abs(sy - ty) < 2) cands.push([[a.right, sy], [b.left - 6, ty]]);
           cands.push([[a.right, sy], [gxT, sy], [gxT, ty], [b.left - 6, ty]]);
           cands.push([[a.right, sy], [gxS, sy], [gxS, ty], [b.left - 6, ty]]);
           cands.push([[a.right, sy], [gxS, sy], [gxS, gy], [gxT, gy], [gxT, ty], [b.left - 6, ty]]);
         } else if (ed.dir === 'back') {
-          const gxT = nudge(gapBefore(cols, cb, 15)), gxS = nudge(gapBefore(cols, ca, 15));
-          cands.push([[a.left, sy], [gxT, sy], [gxT, ty], [b.left - 6, ty]]);
-          cands.push([[a.left, sy], [gxS, sy], [gxS, gy], [gxT, gy], [gxT, ty], [b.left - 6, ty]]);
+          const gxT = gapAfter(cols, cb, 15), gxS = gapBefore(cols, ca, 15), gxF = gapBefore(cols, cb, 15);
+          cands.push([[a.left, sy], [gxT, sy], [gxT, ty], [b.right + 6, ty]]);
+          cands.push([[a.left, sy], [gxS, sy], [gxS, gy], [gxT, gy], [gxT, ty], [b.right + 6, ty]]);
+          cands.push([[a.left, sy], [gxF, sy], [gxF, ty], [b.left - 6, ty]]);
         } else {
-          const gxS = nudge(gapAfter(cols, ca, 17));
+          const gxS = gapAfter(cols, ca, 17), gxL = gapBefore(cols, ca, 17);
           cands.push([[a.right, sy], [gxS, sy], [gxS, ty], [b.right + 6, ty]]);
+          cands.push([[a.left, sy], [gxL, sy], [gxL, ty], [b.left - 6, ty]]);
           cands.push([[a.right, sy], [gxS, sy], [gxS, gy], [gxS, gy], [gxS, ty], [b.right + 6, ty]]);
         }
+        const rt = route(ed.dir === 'back' ? a.left : a.right, sy, ed.dir === 'fwd' ? b.left - 6 : b.right + 6, ty, ed.s, ed.t);
+        if (rt) cands.unshift(rt);
         let bp = cands[0], bc = 1e9;
         for (let i = 0; i < cands.length; i++) {
           const p = pierce(cands[i], ed.s, ed.t);
           if (p < bc) { bc = p; bp = cands[i]; if (p === 0) break; }
         }
+        // 통로 내부 구간을 비어 있는 쪽으로 밀어 다른 선과 겹치지 않게 한다
+        const base = pierce(bp, ed.s, ed.t);
+        for (let i = 1; i + 2 < bp.length; i++) {
+          const A = bp[i], C = bp[i + 1];
+          const isV = Math.abs(A[0] - C[0]) < 1.5, isH = Math.abs(A[1] - C[1]) < 1.5;
+          if (!isV && !isH) continue;
+          const k = isV ? 0 : 1, v0 = A[k];
+          for (let j = 0; j < OFFS.length; j++) {
+            const v = v0 + OFFS[j];
+            A[k] = v; C[k] = v;
+            const lo = Math.min(A[1 - k], C[1 - k]), hi = Math.max(A[1 - k], C[1 - k]);
+            const bad = (isV ? clashV(v, lo, hi) : clashH(v, lo, hi)) || pierce(bp, ed.s, ed.t) > base;
+            if (!bad) break;
+            if (j === OFFS.length - 1) { A[k] = v0; C[k] = v0; }
+          }
+        }
         pts = bp;
       }
+      register(pts);
       const p = document.createElementNS(NS, 'path');
       p.setAttribute('class', 'e'); p.setAttribute('d', this.rp(pts, 9)); p.setAttribute('fill', 'none');
       p.setAttribute('stroke', ed.back ? cB : cE); p.setAttribute('stroke-width', '1.2');
@@ -650,9 +770,9 @@ class Component extends DCLogic {
             tagName: kd.name, bd: kd.bd, rail: kd.rail, mark: kd.mark, idc: kd.idc, law: n.law || '',
             dim: sel ? (is ? 1 : 0.32) : 1,
             filt: sel && !is ? 'saturate(.5)' : 'none',
-            tf: is ? 'scale(1.02)' : 'none',
+            tf: 'none',
             z: is ? 5 : 'auto',
-            anim: is ? 'wfPop .8s ease both' : 'none',
+            anim: 'none',
             glow: is ? '0 10px 26px rgba(0,0,0,.16), 0 0 0 2px var(--a500)' : 'none',
             go: () => this.setState(s => ({ sel: s.sel === n.id ? null : n.id }), () => this.relight()),
             enter: () => this.setState({ hover: n.id }, () => this.relight()),
