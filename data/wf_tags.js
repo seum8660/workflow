@@ -3,7 +3,7 @@
    - WF_BOARDNM  : 보드 키 → 보드 이름
    - WF_GRAPH  : 그래프 뷰(2D·3D)에 합칠 노드/링크
 */
-var WF_BOARDNM={cycle:'프로세스(Process)',change:'설계변경',extend:'공기연장',cm:'감리방식',safety:'안전사고',permit:'인허가',evalx:'엔지니어링평가',pre:'사전기획 적정성검토',pubrev:'공공건축심의',contest:'설계공모 운영',bid:'설계 입찰공고',order:'설계용역 발주',audit:'일상감사',advis:'기술자문위원회',ve:'설계경제성검토(VE)',dfsrun:'건설공사 안전관리 업무수행',dfs:'설계안전성검토',precert:'예비인증 신청',dseval:'설계용역 평가',safecert:'교육시설 안전인증',report:'실정보고',prefin:'예비준공검사',finish:'준공검사',demol:'해체계획서 작성·검토',demolrev:'해체계획서 검토 사례집',indirect:'공기연장 간접공사비',fmsafe:'시설물 안전·유지관리',subcon:'건설공사 하도급 심사',quality:'건설공사 품질관리',hinsur:'건설공사 사후정산',postev:'건설공사 사후평가',engord:'엔지니어링사업 발주',cems:'CEMS 실적 등재',bfcert:'BF 인증',sunday:'일요일 휴무제',qsmall:'소규모공사 품질관리',cperiod:'공사기간 산정',splan:'안전관리계획'};
+var WF_BOARDNM={cycle:'프로세스(Process)',change:'설계변경',extend:'공기연장',cm:'감리방식',seismic:'내진설계·보강',shbook:'안전보건대장',intent:'설계의도 구현',safety:'안전사고',permit:'인허가',evalx:'엔지니어링평가',pre:'사전기획 적정성검토',pubrev:'공공건축심의',contest:'설계공모 운영',bid:'설계 입찰공고',order:'설계용역 발주',audit:'일상감사',advis:'기술자문위원회',ve:'설계경제성검토(VE)',dfsrun:'건설공사 안전관리 업무수행',dfs:'설계안전성검토',precert:'예비인증 신청',dseval:'설계용역 평가',safecert:'교육시설 안전인증',report:'실정보고',prefin:'예비준공검사',finish:'준공검사',demol:'해체계획서 작성·검토',demolrev:'해체계획서 검토 사례집',indirect:'공기연장 간접공사비',fmsafe:'시설물 안전·유지관리',subcon:'건설공사 하도급 심사',quality:'건설공사 품질관리',hinsur:'건설공사 사후정산',postev:'건설공사 사후평가',engord:'엔지니어링사업 발주',cems:'CEMS 실적 등재',bfcert:'BF 인증',sunday:'일요일 휴무제',qsmall:'소규모공사 품질관리',cperiod:'공사기간 산정',splan:'안전관리계획'};
 
 var WF_TAGS={
   cycle:['PROCESS','사전기획','설계','발주','준공검사'],
@@ -25,6 +25,9 @@ var WF_TAGS={
   extend:['공기연장','지체상금','계약기간변경'],
   report:['실정보고','현장여건','설계변경'],
   safety:['안전사고','중대재해','산업안전보건법'],
+  intent:['설계의도 구현','사후설계관리업무','상세시공도면','자재·장버 검토','참여설계자 확인서','건축서버산업 진향법'],
+  shbook:['안전보건대장','기본안전보건대장','설계안전보건대장','공사안전보건대장','산업안전보건법 제67조','건설안전기술사','과태료'],
+  seismic:['내진설계','내진등급','내진성능평가','내진보강','책임구조기술자','건축구조기술사','비구조요소','검증위원회','교육부고시'],
   splan:['안전관리계획','정기안전점검','안전총괄책임자','국토안전관리원','착공전승인','건설기술진흥법'],
   prefin:['예비준공검사','시설물 인수인계'],
   finish:['준공검사','준공검사필증','사용승인'],
@@ -51,7 +54,7 @@ var WF_PHASE={
   cycle:'root',pre:'phase:plan',pubrev:'phase:plan',contest:'phase:design',bid:'phase:design',
   order:'phase:design',audit:'phase:design',advis:'phase:design',ve:'phase:design',dfs:'phase:design',dfsrun:'phase:design',
   precert:'phase:design',dseval:'phase:design',cm:'phase:cm',permit:'phase:plan',change:'phase:const',
-  extend:'phase:const',report:'phase:const',safety:'phase:const',splan:'phase:const',prefin:'phase:comp',finish:'phase:comp',
+  extend:'phase:const',report:'phase:const',safety:'phase:const',splan:'phase:const',seismic:'phase:design',shbook:'phase:design',intent:'phase:const',prefin:'phase:comp',finish:'phase:comp',
   evalx:'phase:comp',safecert:'phase:comp',demol:'phase:const',demolrev:'phase:const',indirect:'phase:const',fmsafe:'phase:comp',subcon:'phase:const',quality:'phase:const',hinsur:'phase:const',postev:'phase:comp',engord:'phase:design',cems:'phase:cm',bfcert:'phase:design',sunday:'phase:const',qsmall:'phase:const',cperiod:'phase:design'
 };
 
