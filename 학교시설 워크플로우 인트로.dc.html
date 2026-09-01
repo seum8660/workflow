@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="data/wf_boards.js?v=49"></script>
+<script src="data/wf_boards.js?v=56"></script>
 <script src="data/wf_tags.js?v=41"></script>
 <style>
 :root{
@@ -126,7 +126,7 @@ a:hover{color:#164a75}
       <div style="padding:22px 24px;border-right:1px solid var(--divider);border-bottom:1px solid var(--divider)">
         <div style="font-family:var(--head);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)">Stage · 세로축</div>
         <div style="font-size:18px;font-weight:700;margin-top:6px">언제 하는가</div>
-        <div style="font-size:13.5px;line-height:1.65;color:var(--muted);margin-top:8px">S0 기획·사전심의부터 S5 준공·사용승인까지 여섯 게이트. 앞 게이트의 산출물이 나와야 다음 게이트가 열립니다.</div>
+        <div style="font-size:13.5px;line-height:1.65;color:var(--muted);margin-top:8px">S0 예산단계부터 S11 하자관리까지 여섯 단계 열두 게이트. 앞 게이트의 산출물이 나와야 다음 게이트가 열립니다.</div>
       </div>
       <div style="padding:22px 24px;border-right:1px solid var(--divider);border-bottom:1px solid var(--divider)">
         <div style="font-family:var(--head);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)">Node · 상자</div>
@@ -173,7 +173,7 @@ a:hover{color:#164a75}
   <div style="max-width:1240px;margin:0 auto">
     <div style="font-family:var(--head);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint)">03 / Lifecycle</div>
     <h2 style="font-family:var(--head);font-size:44px;font-weight:600;line-height:1.1;margin:10px 0 0">PROCESS 보드 한 장</h2>
-    <div style="font-size:15.5px;line-height:1.7;color:var(--muted);margin-top:14px;max-width:70ch;text-wrap:pretty">기획부터 준공까지, 다섯 레인과 여섯 게이트가 만나는 자리에 절차 노드가 놓입니다. 나머지 33개 보드도 같은 문법으로 읽습니다.</div>
+    <div style="font-size:15.5px;line-height:1.7;color:var(--muted);margin-top:14px;max-width:70ch;text-wrap:pretty">예산부터 사후관리까지, 다섯 레인과 열두 게이트가 만나는 자리에 절차 노드가 놓입니다. 나머지 33개 보드도 같은 문법으로 읽습니다.</div>
 
     <div style="margin-top:30px;overflow-x:auto;-webkit-overflow-scrolling:touch">
     <div style="min-width:820px;border:1px solid var(--divider)">
@@ -227,7 +227,7 @@ const KIND = {
   bot:  { mark:'var(--a900)', bd:'var(--a900)',    idc:'var(--a900)' },
   post: { mark:'rgba(0,0,0,.35)', bd:'var(--divider)', idc:'var(--muted)' }
 };
-const FALLBACK = [['S0','기획·사전심의'],['S1','사전절차·계획수립'],['S2','설계'],['S3','발주'],['S4','착공·시공'],['S5','준공·사용승인']];
+const FALLBACK = [['S0','예산'],['S1','기획'],['S2','기본설계'],['S3','실시설계'],['S4','공사준비'],['S5','공사진행'],['S6','예비준공검사'],['S7','준공검사'],['S8','사용승인'],['S9','사후평가'],['S10','안전점검'],['S11','하자관리']];
 
 class Component extends DCLogic {
   state = { ready: false, muted: false, narrow: (typeof window !== 'undefined' && window.innerWidth < 880) };

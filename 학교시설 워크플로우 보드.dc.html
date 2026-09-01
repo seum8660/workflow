@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="data/wf_boards.js?v=49"></script>
+<script src="data/wf_boards.js?v=56"></script>
 <script src="data/wf_tags.js?v=41"></script>
 <script src="data/wf_docs.js?v=39"></script>
 <script src="data/wf_canvas.js?v=38"></script>
@@ -21,7 +21,7 @@
   --bg:#fff; --panel:#fff; --text:#000000; --divider:rgba(0,0,0,.52);
   --muted:rgba(0,0,0,.92); --faint:rgba(0,0,0,.80);
   --a300:#3f7db8; --a500:#164a75; --a700:#0d3350; --a900:#000c14;
-  --key-bg:#d3e7fa; --bot-bg:#aacff2; --chip:#fff;
+  --go:#1f7a53; --key-bg:#d3e7fa; --bot-bg:#aacff2; --chip:#fff;
   --edge:#123f66; --edge-back:#9a6b1c; --dot:#00417f;
   --hdbg:#000c14; --hdfg:#ffffff; --hdsub:rgba(255,255,255,1);
   --post-bg:rgba(128,132,136,.16);
@@ -31,7 +31,7 @@
   --bg:#000000; --panel:#0d1116; --text:#ffffff; --divider:rgba(255,255,255,.52);
   --muted:rgba(255,255,255,.94); --faint:rgba(255,255,255,.82);
   --a300:#6a9ac4; --a500:#bfdcfa; --a700:#dcefff; --a900:#f4faff;
-  --key-bg:#12243a; --bot-bg:#1f4066; --chip:#0d1116;
+  --go:#5fd3a2; --key-bg:#12243a; --bot-bg:#1f4066; --chip:#0d1116;
   --edge:#bfdcfa; --edge-back:#e0b463; --dot:#bfdcfa;
   --hdbg:#123a5c; --hdfg:#ffffff; --hdsub:rgba(255,255,255,1);
   --post-bg:rgba(180,186,192,.16);
@@ -40,7 +40,7 @@
   --bg:#faf4e4; --panel:#fffef8; --text:#0f0b02; --divider:rgba(15,11,2,.54);
   --muted:rgba(15,11,2,.92); --faint:rgba(15,11,2,.80);
   --a300:#b98f45; --a500:#6d4810; --a700:#4f3309; --a900:#1b1103;
-  --key-bg:#ead7b2; --bot-bg:#d9c393; --chip:#fffef8;
+  --go:#2f6b4a; --key-bg:#ead7b2; --bot-bg:#d9c393; --chip:#fffef8;
   --edge:#6d4810; --edge-back:#2f6b6b; --dot:#4f3309;
   --hdbg:#1b1103; --hdfg:#fffef8; --hdsub:rgba(255,254,248,1);
   --post-bg:rgba(109,72,16,.16);
@@ -78,10 +78,13 @@ a:hover{color:#164a75}
         </sc-if>
       </div>
     </div>
-    <div style="margin-left:auto;display:flex;border:1px solid var(--divider)">
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <button type="button" onClick="{{ toggleAll }}" style="font:inherit;font-size:12px;font-weight:600;padding:6px 13px;border:1px solid var(--divider);cursor:pointer;background:{{ allBg }};color:{{ allFg }}">{{ allLabel }}</button>
+      <div style="display:flex;border:1px solid var(--divider)">
       <sc-for list="{{ modes }}" as="m" hint-placeholder-count="3">
         <button type="button" onClick="{{ m.go }}" style="font:inherit;font-size:12px;font-weight:600;padding:6px 13px;border:0;border-left:1px solid var(--divider);cursor:pointer;background:{{ m.bg }};color:{{ m.fg }}">{{ m.label }}</button>
       </sc-for>
+      </div>
     </div>
   </div>
 
@@ -159,40 +162,58 @@ a:hover{color:#164a75}
 
         <div style="position:relative;z-index:1">
           <div style="display:flex;align-items:stretch;background:var(--hdbg);color:var(--hdfg);border-bottom:1px solid var(--text)">
-            <div style="flex:0 0 132px;padding:12px 12px 10px;display:flex;align-items:flex-end;font-family:var(--head);font-size:12px;color:var(--hdsub);border-right:1px solid var(--divider)">단계 / 담당</div>
+            <div style="flex:0 0 84px;padding:12px 10px 10px;display:flex;align-items:flex-end;font-family:var(--head);font-size:12px;color:var(--hdsub);border-right:1px solid var(--divider)">대분류</div>
+            <div style="flex:0 0 120px;padding:12px 12px 10px;display:flex;align-items:flex-end;font-family:var(--head);font-size:12px;color:var(--hdsub);border-right:1px solid var(--divider)">세부단계</div>
             <sc-for list="{{ laneHead }}" as="h" hint-placeholder-count="5">
               <div style="flex:1 1 0;min-width:0;padding:12px;border-right:1px solid var(--divider);font-family:var(--head);font-size:16px;font-weight:500;line-height:1.2">
                 {{ h.name }}
                 <small style="display:block;font-family:'Pretendard',sans-serif;font-size:10.5px;font-weight:500;color:var(--hdsub);letter-spacing:.08em;margin-top:3px">{{ h.no }}</small>
               </div>
             </sc-for>
-            <div style="flex:0 0 96px"></div>
+            <div style="flex:0 0 {{ gutter }}"></div>
           </div>
 
           <sc-for list="{{ rows }}" as="row" hint-placeholder-count="6">
-            <div style="display:flex;align-items:stretch;border-bottom:1px dashed var(--divider)">
-              <div style="flex:0 0 132px;padding:14px 12px;display:flex;flex-direction:column;justify-content:center;gap:2px;background:var(--key-bg);border-right:1px solid var(--divider)">
-                <b style="font-family:var(--head);font-size:20px;font-weight:600;line-height:1;color:var(--a700)">{{ row.k }}</b>
-                <span style="font-size:11px;color:var(--muted)">{{ row.n }}</span>
+            <div style="display:flex;align-items:stretch">
+              <div style="flex:0 0 84px;padding:14px 10px;display:flex;align-items:center;background:var(--key-bg);border-right:1px solid var(--divider);border-bottom:{{ row.gbd }}">
+                <span style="font-family:var(--head);font-size:13px;font-weight:600;line-height:1.25;color:var(--a700);word-break:keep-all">{{ row.g }}</span>
+              </div>
+              <div style="flex:0 0 120px;padding:14px 12px;display:flex;flex-direction:column;justify-content:center;gap:2px;background:var(--key-bg);border-right:1px solid var(--divider);border-bottom:1px dashed var(--divider)">
+                <b style="font-family:var(--head);font-size:18px;font-weight:600;line-height:1;color:var(--a700)">{{ row.k }}</b>
+                <span style="font-size:11.5px;color:var(--muted)">{{ row.n }}</span>
               </div>
               <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="5">
-                <div style="flex:1 1 0;min-width:0;padding:16px 20px;display:flex;flex-direction:column;gap:10px;border-right:1px solid var(--divider);min-height:96px">
+                <div style="flex:1 1 0;min-width:0;padding:16px 20px;display:flex;flex-direction:column;gap:10px;border-right:1px solid var(--divider);border-bottom:1px dashed var(--divider);min-height:96px">
                   <sc-for list="{{ cell.nodes }}" as="n" hint-placeholder-count="0">
-                    <div data-node="{{ n.id }}" onClick="{{ n.go }}" onMouseEnter="{{ n.enter }}" onMouseLeave="{{ n.leave }}" style="position:relative;background:var(--bg);border:2px solid {{ n.bd }};display:grid;grid-template-columns:38px 1fr;cursor:pointer;opacity:{{ n.dim }};filter:{{ n.filt }};transform:{{ n.tf }};z-index:{{ n.z }};box-shadow:{{ n.glow }};animation:{{ n.anim }};transition:transform .55s cubic-bezier(.2,.8,.3,1),box-shadow .55s,opacity .55s,filter .55s" style-hover="transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.30)">
-                      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 0;background:{{ n.rail }};border-right:1px solid var(--divider)">
+                    <div data-node="{{ n.id }}" onClick="{{ n.go }}" onMouseEnter="{{ n.enter }}" onMouseLeave="{{ n.leave }}" style="position:relative;background:var(--bg);border:{{ n.bw }} solid {{ n.bd }};display:grid;grid-template-columns:38px 1fr;cursor:pointer;opacity:{{ n.dim }};filter:{{ n.filt }};transform:{{ n.tf }};z-index:{{ n.z }};box-shadow:{{ n.glow }};animation:{{ n.anim }};transition:transform .55s cubic-bezier(.2,.8,.3,1),box-shadow .55s,opacity .55s,filter .55s" style-hover="transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.30)">
+                      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 0;background:{{ n.rail }};border-right:1px solid var(--divider)">
                         <span style="font-family:var(--head);font-size:12px;font-weight:600;letter-spacing:.04em;color:{{ n.idc }}">{{ n.id }}</span>
                         <i style="display:block;width:9px;height:9px;flex:0 0 auto;background:{{ n.mark }}"></i>
                       </div>
-                      <div style="padding:10px 11px;display:flex;flex-direction:column;gap:5px;min-width:0">
-                        <span style="font-family:var(--head);font-size:11.5px;font-weight:600;letter-spacing:.12em;color:{{ n.idc }}">{{ n.tagName }}</span>
-                        <div style="font-size:12.5px;line-height:1.45;color:var(--text);text-wrap:pretty">{{ n.t }}</div>
-                        <div style="font-size:10.5px;color:var(--faint)">{{ n.law }}</div>
+                      <div style="padding:9px 11px;min-width:0">
+                        <div style="font-family:var(--head);font-size:13px;font-weight:600;line-height:1.32;color:var(--text);word-break:keep-all;overflow-wrap:anywhere;text-wrap:pretty">{{ n.label }}</div>
+                        <sc-if value="{{ n.open }}" hint-placeholder-val="{{ false }}">
+                          <div style="margin-top:9px;padding-top:9px;border-top:1px dashed var(--divider);display:flex;flex-direction:column;gap:7px">
+                            <div style="font-size:11px;color:var(--faint);letter-spacing:.02em">{{ n.lane }}</div>
+                            <div style="display:flex;flex-direction:column;gap:3px">
+                              <sc-for list="{{ n.chips }}" as="c" hint-placeholder-count="0">
+                                <span style="font-size:11.5px;line-height:1.4;color:var(--muted);word-break:keep-all;text-wrap:pretty">· {{ c }}</span>
+                              </sc-for>
+                            </div>
+                            <sc-if value="{{ n.hasBottle }}" hint-placeholder-val="{{ false }}">
+                              <div style="font-size:11.5px;line-height:1.5;color:var(--a900);text-wrap:pretty">{{ n.bottle }}</div>
+                            </sc-if>
+                            <sc-if value="{{ n.hasGo }}" hint-placeholder-val="{{ false }}">
+                              <button type="button" onClick="{{ n.goBoard }}" style="align-self:flex-start;font:inherit;font-size:11.5px;font-weight:600;color:var(--go);background:transparent;border:1px solid var(--go);padding:4px 9px;margin-top:2px;cursor:pointer" style-hover="background:var(--go);color:var(--bg)">{{ n.goName }} 보드 열기 →</button>
+                            </sc-if>
+                          </div>
+                        </sc-if>
                       </div>
                     </div>
                   </sc-for>
                 </div>
               </sc-for>
-              <div style="flex:0 0 96px"></div>
+              <div style="flex:0 0 {{ gutter }};border-bottom:1px dashed var(--divider)"></div>
             </div>
           </sc-for>
         </div>
@@ -268,6 +289,7 @@ a:hover{color:#164a75}
         </div>
         <div style="font-size:19px;font-weight:700;letter-spacing:-.02em;margin-top:6px">{{ selTitle }}</div>
         <div style="font-size:12px;color:var(--faint);margin-top:3px">{{ selLane }}</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--text);margin-top:9px;text-wrap:pretty">{{ selT }}</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
           <sc-for list="{{ selChips }}" as="c" hint-placeholder-count="0">
             <span style="font-size:12px;color:var(--muted);border:1px solid var(--divider);border-radius:5px;padding:3px 9px">{{ c }}</span>
@@ -306,7 +328,7 @@ const MODES = [['light','라이트'],['dark','다크'],['warm','웜']];
 const DETAILS = ['BF인증','ZEB인증','가설건축물','가설구조물안전성','감리발주','건설사업관리계획','건설산업기본법','건축물대장','계약금액조정','공공건축심의','공사기간산정','공사발주','공사중안전점검','기본안전보건대장','기술자문위원회','기타용역발주','대규모시설일상감사','도시계획시설결정','복합자재품질관리서','본인증용역발주','사업관리업무추진','사용승인','사전기획','산업안전보건관리비','산업안전보건업무','설계경제성검토_VE','설계공모','설계변경_발주청요청','설계변경_설계하자','설계변경_시공자요청','설계안전보건대장','설계안전성검토_DfS','설계용역평가','시행계획_건축승인','안전관리계획서','안전관리비계상','안전성평가','유해위험방지계획서','일상감사_설계용역','일상감사_시설공사','임시소방시설','준공검사','지하안전평가','폐기물처리용역','해체계획서작성검토','해체공사안전관리','화재감시자'];
 
 class Component extends DCLogic {
-  state = { key: null, sel: null, hover: null, q: '', mode: 'light', narrow: (typeof window !== 'undefined' && window.innerWidth < 860) };
+  state = { key: null, sel: null, hover: null, q: '', mode: 'light', showAll: false, narrow: (typeof window !== 'undefined' && window.innerWidth < 860) };
   active() { return this.state.sel || this.state.hover; }
 
   componentDidMount() {
@@ -381,12 +403,13 @@ class Component extends DCLogic {
     const sel = this.active();
     Array.prototype.slice.call(svg.querySelectorAll('path.e')).forEach(p => {
       const lit = sel && (p.dataset.a === sel || p.dataset.b === sel);
+      const main = p.dataset.main === '1';
       const back = p.dataset.back === '1';
       if (!sel) {
         p.style.animation = 'none';
         p.setAttribute('stroke-width', '1.2');
-        p.setAttribute('stroke-dasharray', back ? '5 4' : 'none');
-        p.setAttribute('opacity', back ? '.8' : '.72');
+        p.setAttribute('stroke-dasharray', 'none');
+        p.setAttribute('opacity', main ? '.6' : '0');
       } else if (lit) {
         p.setAttribute('stroke-width', '1.8');
         p.setAttribute('stroke-dasharray', '7 6');
@@ -395,8 +418,8 @@ class Component extends DCLogic {
       } else {
         p.style.animation = 'none';
         p.setAttribute('stroke-width', '1.2');
-        p.setAttribute('stroke-dasharray', back ? '5 4' : 'none');
-        p.setAttribute('opacity', back ? '.34' : '.28');
+        p.setAttribute('stroke-dasharray', 'none');
+        p.setAttribute('opacity', main ? '.22' : '0');
       }
     });
     Array.prototype.slice.call(svg.querySelectorAll('circle.mdot')).forEach(c => c.remove());
@@ -427,6 +450,8 @@ class Component extends DCLogic {
     const cE = this.cssv('--edge', '#123f66'), cB = this.cssv('--edge-back', '#3b4045');
     svg.style.color = cE;
     const bh = svg.querySelector('path.bhead'); if (bh) bh.setAttribute('fill', cB);
+    const MAINK = {};
+    (B.NODES || []).forEach(n => { if (n.k !== 'post') MAINK[n.id] = 1; });
     const R = {};
     (B.NODES || []).forEach(n => {
       const el = board.querySelector('[data-node="' + n.id + '"]');
@@ -672,6 +697,7 @@ class Component extends DCLogic {
       p.setAttribute('marker-end', ed.back ? 'url(#wfarb)' : 'url(#wfar)');
       if (ed.back) p.setAttribute('stroke-dasharray', '5 4');
       p.dataset.a = ed.s; p.dataset.b = ed.t; p.dataset.back = ed.back ? '1' : '0';
+      p.dataset.main = (!ed.back && MAINK[ed.s] && MAINK[ed.t]) ? '1' : '0';
       svg.appendChild(p);
     });
     this.relight();
@@ -739,6 +765,10 @@ class Component extends DCLogic {
       onQuery: (e) => this.setState({ q: e.target.value }),
       onKey: (e) => { if (e.key === 'Enter' && results[0]) results[0].go(); if (e.key === 'Escape') this.setState({ q: '' }); },
       clearQ: () => this.setState({ q: '' }),
+      toggleAll: () => this.setState(s => ({ showAll: !s.showAll })),
+      allBg: this.state.showAll ? 'var(--text)' : 'transparent',
+      allFg: this.state.showAll ? 'var(--bg)' : 'var(--muted)',
+      allLabel: this.state.showAll ? '핵심만 보기' : '전체 보기',
       closePanel: () => this.setState({ sel: null, hover: null }, () => this.relight()),
       xDisplay: q ? 'block' : 'none',
       resDisplay: q ? 'block' : 'none',
@@ -757,17 +787,25 @@ class Component extends DCLogic {
           mark: on ? 'inset 3px 0 0 var(--a500)' : 'none' };
       })
     };
-    if (!B) return Object.assign(base, { rows: [], laneHead: [], stats: [], tags: [], panelT: 'translateY(110%)', hasCanvas: false, cvReform: [], cvRel: [] });
+    if (!B) return Object.assign(base, { rows: [], gutter: '0px', laneHead: [], stats: [], tags: [], panelT: 'translateY(110%)', hasCanvas: false, cvReform: [], cvRel: [] });
 
     const sel = this.active();
     const rows = B.STAGES.map((st, si) => ({
       k: st.k, n: st.n,
+      g: (si === 0 || B.STAGES[si - 1].g !== st.g) ? (st.g || '') : '',
+      gbd: (si === B.STAGES.length - 1 || B.STAGES[si + 1].g !== st.g) ? '1px solid var(--divider)' : 'none',
       cells: B.LANES.map(ln => ({
-        nodes: B.NODES.filter(n => n.s === si && n.l === ln).map(n => {
+        nodes: B.NODES.filter(n => n.s === si && n.l === ln && (this.state.showAll || n.k !== 'post')).map(n => {
           const kd = KIND[n.k] || KIND.key;
           const is = sel === n.id;
           return Object.assign({}, n, {
-            tagName: kd.name, bd: kd.bd, rail: kd.rail, mark: kd.mark, idc: kd.idc, law: n.law || '',
+            tagName: kd.name, bd: is ? kd.bd : 'var(--divider)', bw: is ? '2px' : '1px',
+            rail: is ? kd.rail : 'transparent', mark: is ? kd.mark : 'var(--faint)', idc: is ? kd.idc : 'var(--faint)',
+            law: n.law || '', label: n.title || n.t,
+            open: is, chips: n.chips || [], due: n.due || '—', lawX: n.law || '—',
+            bottle: n.bottle || '', hasBottle: !!n.bottle,
+            hasGo: !!(n.to && (window.WF_BOARDS || {})[n.to]), goName: NM[n.to] || '',
+            goBoard: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.pick(n.to); },
             dim: sel ? (is ? 1 : 0.32) : 1,
             filt: sel && !is ? 'saturate(.5)' : 'none',
             tf: 'none',
@@ -800,9 +838,10 @@ class Component extends DCLogic {
       laneHead: (B.laneHead || []).map(l => ({ name: l[0], no: l[1] })),
       stats: [{ v: B.NODES.length, n: '절차 노드' }, { v: B.LANES.length, n: '행위 레인' }, { v: B.STAGES.length, n: '단계 게이트' }, { v: bots, n: '병목 구간' }, { v: back, n: '회귀 경로' }],
       rows,
+      gutter: back > 0 ? '96px' : '0px',
       panelT: sn ? 'translateY(0)' : 'translateY(110%)',
       selId: sn ? sn.id : '', selTag: sn ? (KIND[sn.k] || KIND.key).name : '',
-      selTitle: sn ? (sn.title || sn.t) : '', selLane: sn ? sn.lane : '',
+      selTitle: sn ? (sn.title || sn.t) : '', selLane: sn ? sn.lane : '', selT: sn ? (sn.t || '') : '',
       selChips: sn ? (sn.chips || []) : [], selDue: sn ? sn.due : '',
       selBottle: sn ? (sn.bottle || '') : '', selLaw: sn ? (sn.law || '—') : '', selLawT: sn ? (sn.lawT || '') : ''
     });
