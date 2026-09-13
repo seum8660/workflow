@@ -12,9 +12,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="data/wf_boards.js?v=58"></script>
-<script src="data/wf_tags.js?v=43"></script>
-<script src="data/wf_docs.js?v=41"></script>
+<script src="data/wf_boards.js?v=59"></script>
+<script src="data/wf_tags.js?v=44"></script>
+<script src="data/wf_docs.js?v=42"></script>
 <script src="data/wf_canvas.js?v=39"></script>
 <style>
 [data-mode]{
@@ -732,6 +732,22 @@ class Component extends DCLogic {
 
     let results = [];
     if (q) {
+      // 보드 명칭·제목·태그가 일치하면 보드 자체를 먼저 제시
+      (window.WF_ORDER || []).forEach(bk => {
+        const bb = window.WF_BOARDS[bk]; if (!bb) return;
+        const name = NM[bk] || bb.title || bk;
+        const tags = (window.WF_TAGS && window.WF_TAGS[bk]) || [];
+        const hay = [name, bb.title, tags.join(' ')].join(' ').toLowerCase();
+        if (hay.indexOf(q) < 0) return;
+        const i = name.toLowerCase().indexOf(q);
+        results.push({
+          id: '보드 열기', board: name,
+          pre: i < 0 ? name : name.slice(0, i),
+          mid: i < 0 ? '' : name.slice(i, i + q.length),
+          post: i < 0 ? '' : name.slice(i + q.length),
+          go: () => this.pick(bk)
+        });
+      });
       (window.WF_ORDER || []).forEach(bk => {
         const bb = window.WF_BOARDS[bk]; if (!bb) return;
         bb.NODES.forEach(n => {

@@ -3,13 +3,14 @@
    - WF_BOARDNM  : 보드 키 → 보드 이름
    - WF_GRAPH  : 그래프 뷰(2D·3D)에 합칠 노드/링크
 */
-var WF_BOARDNM={cycle:'프로세스(Process)',change:'설계변경',extend:'공기연장',cm:'감리방식',seismic:'내진설계·보강',shbook:'안전보건대장',intent:'설계의도 구현',energy:'에너지절약설계기준',safety:'안전사고',permit:'인허가',evalx:'엔지니어링평가',pre:'사전기획 적정성검토',pubrev:'공공건축심의',bid:'설계 입찰공고',order:'설계용역 발주',audit:'일상감사',advis:'기술자문위원회',ve:'설계경제성검토(VE)',dfsrun:'건설공사 안전관리 업무수행',dfs:'설계안전성검토',precert:'예비인증 신청',dseval:'설계용역 평가',safecert:'교육시설 안전인증',report:'실정보고',prefin:'예비준공검사',finish:'준공검사',demol:'해체계획서 작성·검토',demolrev:'해체계획서 검토 사례집',indirect:'공기연장 간접공사비',fmsafe:'시설물 안전·유지관리',subcon:'건설공사 하도급 심사',quality:'건설공사 품질관리',hinsur:'건설공사 사후정산',postev:'건설공사 사후평가',engord:'엔지니어링사업 발주',cems:'CEMS 실적 등재',bfcert:'BF 인증',sunday:'일요일 휴무제',qsmall:'소규모공사 품질관리',cperiod:'공사기간 산정',splan:'안전관리계획',modular:'모듈러 교사 설치 안전관리',stdcmp:'표준 설계공모지침서(일반)',propcmp:'표준 설계공모지침서(제안공모)'};
+var WF_BOARDNM={cycle:'프로세스(Process)',change:'설계변경',extend:'공기연장',cm:'감리방식',seismic:'내진설계·보강',shbook:'안전보건대장',intent:'설계의도 구현',energy:'에너지절약설계기준',safety:'안전사고',permit:'인허가',evalx:'엔지니어링평가',pre:'사전기획 적정성검토',pubrev:'공공건축심의',bid:'설계 입찰공고',order:'설계용역 발주',audit:'일상감사',advis:'기술자문위원회',ve:'설계경제성검토(VE)',dfsrun:'건설공사 안전관리 업무수행',dfs:'설계안전성검토',precert:'예비인증 신청',dseval:'설계용역 평가',safecert:'교육시설 안전인증',report:'실정보고',prefin:'예비준공검사',finish:'준공검사',demol:'해체계획서 작성·검토',demolrev:'해체계획서 검토 사례집',indirect:'공기연장 간접공사비',fmsafe:'시설물 안전·유지관리',subcon:'건설공사 하도급 심사',quality:'건설공사 품질관리',hinsur:'건설공사 사후정산',postev:'건설공사 사후평가',engord:'엔지니어링사업 발주',cems:'CEMS 실적 등재',bfcert:'BF 인증',sunday:'일요일 휴무제',qsmall:'소규모공사 품질관리',cperiod:'공사기간 산정',splan:'안전관리계획',modular:'모듈러 교사 설치 안전관리',stdcmp:'표준 설계공모지침서(일반)',propcmp:'표준 설계공모지침서(제안공모)',startwk:'착공계 제출서류'};
 
 var WF_TAGS={
   cycle:['PROCESS','사전기획','설계','발주','준공검사','사용자참여설계','예비인증','사후평가','안전점검','하자관리'],
   pre:['사전기획','적정성검토','교육시설안전원','그린스마트'],
   pubrev:['공공건축심의','건축서비스산업법','심의위원회'],
   stdcmp:['설계공모','표준설계공모지침서','건축HUB','기술검토','심사위원회','투표제','사전접촉금지','제출도서','설계의도구현','보상비'],
+  startwk:['착공계','착공신고','현장기술자','공정예정표','품질시험계획','안전관리계획','환경관리계획','산업안전보건관리비','KISCON','직접시공'],
   propcmp:['제안공모','표준설계공모지침서','설계자선정','정량평가','정성평가','제안과제','포트폴리오','혼합방식','자기평가표','건축HUB'],
   bid:['입찰공고','협상에의한계약','제안서평가'],
   order:['설계용역','설계대가','과업지시서'],
@@ -38,7 +39,7 @@ var WF_TAGS={
   safecert:['교육시설 안전인증','교육시설법','최우수등급'],
   demol:['해체계획서','해체공사','석면'],
   demolrev:['해체계획서검토','건축물관리법','국토안전관리원','해체감리','구조안전'],
-  indirect:['간접공사비','공기연장','실비정산'],
+  indirect:['간접공사비','공기연장','실비정산','간접노무비','심의위원회','장기계속공사','승률방식','실정보고'],
   fmsafe:['시설물안전법','정기안전점검','제3종시설물'],
   subcon:['하도급','하도급심사','하도급율','부대입찰','건설산업기본법'],
   quality:['품질','품질관리계획','품질시험','자재공급원','레미콘','CSI'],
@@ -56,7 +57,7 @@ var WF_TAGS={
 var WF_PHASE={
   cycle:'root',pre:'phase:plan',pubrev:'phase:plan',stdcmp:'phase:design',propcmp:'phase:design',bid:'phase:design',
   order:'phase:design',audit:'phase:design',advis:'phase:design',ve:'phase:design',dfs:'phase:design',dfsrun:'phase:design',
-  precert:'phase:design',dseval:'phase:design',cm:'phase:cm',permit:'phase:plan',change:'phase:const',
+  precert:'phase:design',dseval:'phase:design',cm:'phase:cm',startwk:'phase:const',permit:'phase:plan',change:'phase:const',
   extend:'phase:const',report:'phase:const',safety:'phase:const',splan:'phase:const',seismic:'phase:design',shbook:'phase:design',energy:'phase:design',intent:'phase:const',prefin:'phase:comp',finish:'phase:comp',
   evalx:'phase:comp',safecert:'phase:comp',demol:'phase:const',demolrev:'phase:const',indirect:'phase:const',fmsafe:'phase:comp',subcon:'phase:const',quality:'phase:const',hinsur:'phase:const',postev:'phase:comp',engord:'phase:design',cems:'phase:cm',bfcert:'phase:design',sunday:'phase:const',qsmall:'phase:const',cperiod:'phase:design',modular:'phase:const'
 };
