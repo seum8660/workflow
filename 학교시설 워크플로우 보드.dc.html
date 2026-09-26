@@ -147,8 +147,16 @@ a:hover{color:#164a75}
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:9px;font-size:12px;color:var(--muted)">
         <span style="display:inline-flex;align-items:center;gap:9px;padding:7px 12px;border:1px solid var(--divider);background:var(--panel)"><i style="display:block;width:24px;height:18px;flex:0 0 auto;background:var(--bg);border:1px dashed var(--faint)"></i><em style="font-style:normal;font-weight:700;color:var(--text)">후속</em> 앞 단계 결과를 이행·관리하는 업무</span>
+        <span style="display:inline-flex;align-items:center;gap:9px;padding:7px 12px;border:1px solid var(--divider);background:var(--panel)"><i style="display:block;width:24px;height:18px;flex:0 0 auto;background:var(--bg);border:1px dashed var(--edge-back)"></i><em style="font-style:normal;font-weight:700;color:var(--text)">회귀</em> 보완·재제출로 앞 단계로 되돌아가는 업무</span>
         <span style="display:inline-flex;align-items:center;gap:9px;padding:7px 12px;border:1px solid var(--divider);background:var(--panel)"><i style="display:block;width:28px;height:0;flex:0 0 auto;border-top:3px solid var(--a500)"></i>업무 순서</span>
         <span style="display:inline-flex;align-items:center;gap:9px;padding:7px 12px;border:1px solid var(--divider);background:var(--panel)"><i style="display:block;width:28px;height:0;flex:0 0 auto;border-top:3px dashed var(--edge-back)"></i>회귀(보완·반려 재신청)</span>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:9px;font-size:12px;color:var(--muted)">
+        <em style="font-style:normal;font-weight:700;color:var(--text);font-family:var(--head);font-size:13px;letter-spacing:.04em">연결선 품질</em>
+        <sc-for list="{{ qa }}" as="m" hint-placeholder-count="4">
+          <span style="display:inline-flex;align-items:center;gap:7px;padding:5px 10px;border:1px solid {{ m.bd }};background:var(--panel)"><b style="font-family:var(--head);font-size:15px;font-weight:600;color:{{ m.fg }}">{{ m.v }}</b>{{ m.n }} <span style="color:var(--faint)">{{ m.lim }}</span></span>
+        </sc-for>
       </div>
 
       <div style="margin-top:18px;overflow-x:auto;-webkit-overflow-scrolling:touch">
@@ -322,7 +330,8 @@ const KIND = {
   lead: { name:'선행', bd:'var(--divider)', rail:'var(--key-bg)', mark:'var(--a300)', idc:'var(--a700)' },
   key:  { name:'핵심', bd:'var(--divider)', rail:'var(--key-bg)', mark:'var(--a500)', idc:'var(--a700)' },
   bot:  { name:'병목', bd:'var(--a900)',    rail:'var(--bot-bg)', mark:'var(--a900)', idc:'var(--a900)' },
-  post: { name:'후속', bd:'var(--divider)', rail:'var(--post-bg)', mark:'var(--faint)', idc:'var(--muted)' }
+  post: { name:'후속', bd:'var(--divider)', rail:'var(--post-bg)', mark:'var(--faint)', idc:'var(--muted)' },
+  loop: { name:'회귀', bd:'var(--edge-back)', rail:'var(--post-bg)', mark:'var(--edge-back)', idc:'var(--edge-back)' }
 };
 const MODES = [['light','라이트'],['dark','다크'],['warm','웜']];
 const DETAILS = ['BF인증','ZEB인증','가설건축물','가설구조물안전성','감리발주','건설사업관리계획','건설산업기본법','건축물대장','계약금액조정','공공건축심의','공사기간산정','공사발주','공사중안전점검','기본안전보건대장','기술자문위원회','기타용역발주','대규모시설일상감사','도시계획시설결정','복합자재품질관리서','본인증용역발주','사업관리업무추진','사용승인','사전기획','산업안전보건관리비','산업안전보건업무','설계경제성검토_VE','설계공모','설계변경_발주청요청','설계변경_설계하자','설계변경_시공자요청','설계안전보건대장','설계안전성검토_DfS','설계용역평가','시행계획_건축승인','안전관리계획서','안전관리비계상','안전성평가','유해위험방지계획서','일상감사_설계용역','일상감사_시설공사','임시소방시설','준공검사','지하안전평가','폐기물처리용역','해체계획서작성검토','해체공사안전관리','화재감시자'];
@@ -451,7 +460,8 @@ class Component extends DCLogic {
     svg.style.color = cE;
     const bh = svg.querySelector('path.bhead'); if (bh) bh.setAttribute('fill', cB);
     const MAINK = {};
-    (B.NODES || []).forEach(n => { if (n.k !== 'post') MAINK[n.id] = 1; });
+    (B.NODES || []).forEach(n => { if (n.k !== 'post' && n.k !== 'loop') MAINK[n.id] = 1; });
+    const ALL = [];
     const R = {};
     (B.NODES || []).forEach(n => {
       const el = board.querySelector('[data-node="' + n.id + '"]');
@@ -689,6 +699,7 @@ class Component extends DCLogic {
         pts = bp;
       }
       register(pts);
+      ALL.push({ s: ed.s, t: ed.t, pts });
       const p = document.createElementNS(NS, 'path');
       p.setAttribute('class', 'e'); p.setAttribute('d', this.rp(pts, 9)); p.setAttribute('fill', 'none');
       p.setAttribute('stroke', ed.back ? cB : cE); p.setAttribute('stroke-width', '1.2');
@@ -700,7 +711,45 @@ class Component extends DCLogic {
       p.dataset.main = (!ed.back && MAINK[ed.s] && MAINK[ed.t]) ? '1' : '0';
       svg.appendChild(p);
     });
+    this.audit(ALL, R, ids);
     this.relight();
+  }
+
+  // korea100studio 구성 품질 기준: 카드 관통 0 · 교차 ≤6 · 꺾임 ≤4 · 우회율 ≤2.2
+  audit(ALL, R, ids) {
+    let pierce = 0, cross = 0, bends = 0, stretch = 0;
+    const cw = ids.length ? ids.reduce((a, id) => a + (R[id].right - R[id].left), 0) / ids.length : 1;
+    const segs = [];
+    ALL.forEach((e, ei) => {
+      const P = e.pts;
+      bends = Math.max(bends, Math.max(0, P.length - 2));
+      let len = 0;
+      for (let i = 0; i + 1 < P.length; i++) {
+        const A = P[i], C = P[i + 1];
+        len += Math.abs(A[0] - C[0]) + Math.abs(A[1] - C[1]);
+        const x1 = Math.min(A[0], C[0]), x2 = Math.max(A[0], C[0]), y1 = Math.min(A[1], C[1]), y2 = Math.max(A[1], C[1]);
+        segs.push({ ei, v: x2 - x1 < 1.5, x1, x2, y1, y2 });
+        for (let j = 0; j < ids.length; j++) {
+          const id = ids[j]; if (id === e.s || id === e.t) continue;
+          const r = R[id];
+          if (r.left + 3 < x2 && r.right - 3 > x1 && r.top + 3 < y2 && r.bottom - 3 > y1) pierce++;
+        }
+      }
+      const a = P[0], b = P[P.length - 1];
+      stretch = Math.max(stretch, len / Math.max(Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]), cw));
+    });
+    segs.forEach(h => {
+      if (h.v) return;
+      segs.forEach(v => {
+        if (!v.v || v.ei === h.ei) return;
+        if (v.x1 > h.x1 + 2 && v.x1 < h.x2 - 2 && h.y1 > v.y1 + 2 && h.y1 < v.y2 - 2) cross++;
+      });
+    });
+    const qa = { pierce, cross, bends, stretch: Math.round(stretch * 10) / 10 };
+    window.__WFQA = window.__WFQA || {};
+    window.__WFQA[this.state.key] = qa;
+    const o = this.state.qa;
+    if (!o || o.pierce !== qa.pierce || o.cross !== qa.cross || o.bends !== qa.bends || o.stretch !== qa.stretch) this.setState({ qa });
   }
 
   pick(k) {
@@ -804,7 +853,7 @@ class Component extends DCLogic {
           mark: on ? 'inset 3px 0 0 var(--a500)' : 'none' };
       })
     };
-    if (!B) return Object.assign(base, { rows: [], gutter: '0px', laneHead: [], stats: [], tags: [], panelT: 'translateY(110%)', hasCanvas: false, cvReform: [], cvRel: [] });
+    if (!B) return Object.assign(base, { rows: [], gutter: '0px', laneHead: [], stats: [], qa: [], tags: [], panelT: 'translateY(110%)', hasCanvas: false, cvReform: [], cvRel: [] });
 
     const sel = this.active();
     const rows = B.STAGES.map((st, si) => ({
@@ -812,7 +861,7 @@ class Component extends DCLogic {
       g: (si === 0 || B.STAGES[si - 1].g !== st.g) ? (st.g || '') : '',
       gbd: (si === B.STAGES.length - 1 || B.STAGES[si + 1].g !== st.g) ? '1px solid var(--divider)' : 'none',
       cells: B.LANES.map(ln => ({
-        nodes: B.NODES.filter(n => n.s === si && n.l === ln && (this.state.showAll || this.state.key !== 'cycle' || n.k !== 'post')).map(n => {
+        nodes: B.NODES.filter(n => n.s === si && n.l === ln && (this.state.showAll || this.state.key !== 'cycle' || (n.k !== 'post' && n.k !== 'loop'))).map(n => {
           const kd = KIND[n.k] || KIND.key;
           const is = sel === n.id;
           return Object.assign({}, n, {
@@ -842,7 +891,10 @@ class Component extends DCLogic {
     const sn = this.state.sel ? B.NODES.filter(n => n.id === this.state.sel)[0] : null;
 
     const cv = (window.WF_CANVAS || {})[this.state.key] || null;
+    const Q = this.state.qa || { pierce: '–', cross: '–', bends: '–', stretch: '–' };
+    const qm = (v, lim, n, l) => { const bad = typeof v === 'number' && v > lim; return { v, n, lim: l, fg: bad ? 'var(--edge-back)' : 'var(--text)', bd: bad ? 'var(--edge-back)' : 'var(--divider)' }; };
     return Object.assign(base, {
+      qa: [qm(Q.pierce, 0, '카드 관통', '기준 0'), qm(Q.cross, 6, '선 교차', '기준 6 이하'), qm(Q.bends, 4, '최대 꺾임', '기준 4 이하'), qm(Q.stretch, 2.2, '최대 우회율', '기준 2.2 이하')],
       kick: B.kick, title: B.title, sub: B.sub,
       hasCanvas: !!cv,
       cvMoney: cv ? cv.money : '', cvDocs: cv ? cv.docs : '',
