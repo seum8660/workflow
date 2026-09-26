@@ -4,10 +4,26 @@ path: manuals/
 role: source (학교시설치트키 요약문서 원본)
 
 ## Last sync
-date: 2026-08-20T13:32:18Z
-reference: hosungseo/korea100studio (main) — SKILL.md, references/authoring.md, references/composition-quality.md, references/profiles.md, schemas/board-v1.schema.json
+date: 2026-09-26T09:50:41Z
+reference: hosungseo/korea100studio (main) — references/profiles.md · references/composition-quality.md
 
 ### Updated in this project
+- 노드 구분에 「회귀」 추가(korea100studio loop 구분) — 보완·재제출 노드 12건을 후속에서 회귀로 변경, 범례 추가
+- 프로세스 보드에 연결선 품질 지표 표시 — 카드 관통 0 · 선 교차 6 이하 · 최대 꺾임 4 이하 · 최대 우회율 2.2 이하
+- 사전기획 적정성 검토(pre) 보드에 korea100 데이터 계약 규칙 적용 — 10개 노드 근거를 조문 단위로 교체(교육시설법 제26조의2·제26조의3, 시행령 제23조의2·제23조의3, 건축서비스산업 진흥법 제22조의2제4항·제22조의3·제23조제2항), 확신도 80% 미만 7건 '(현장 검증 필요)' 표기
+- 전체 45개 보드 근거 표기 점검 — 약칭 문서명을 정식명칭(고시번호)으로 교체, 공사계약일반조건 → 지자체 입찰 및 계약 집행기준 제9장 계약 일반조건, 내부 규정은 (내부규정) 표기, 설계변경 보드 근거 공란 10건 보완, 공공건축심의 근거 제19조의2 → 제22조의2제4항·제22조의3 교정
+- 확신도 80% 미만 225개 노드 '(현장 검증 필요)' 표기, 조문번호가 없는 근거 110건 '(조문 확인 필요)' 표기
+- 사전기획 적정성 검토 기한을 접수 후 30일 이내(공휴일 제외)로 교정(프로세스·사전기획 보드)
+- 45개 보드 점검 결과: 카드 관통 전 보드 0건, 선 교차 기준 초과 다수, 우회율 초과 1건(해체계획서 검토 사례집 2.3)
+
+## Sync history
+### 2026-08-24T07:41:18Z — hosungseo/korea100 (main, reference)
+reference: docs/data-contract.md (ProcessModel 작성 규칙)
+- 감리방식(cm) 보드만 korea100 데이터 계약 규칙 적용 — 15개 노드 법령 근거를 법령명+조문번호로 교체(건진법 시행령 제55조 제1항, 건축법 제25조 제1항, 건진법 제39조의2 제1항·제2항, 지방계약법 시행령 제43조, 지방계약법 제14조 등)
+- 모호한 근거 표기 정리: '국토부 고시'·'일상감사 지침'·'위임전결 규정'·'업무수행지침' → 정식 명칭·조문 또는 (내부규정) 표기
+- 확신도 80% 미만 노드 6건(N04·N05·N06·N07·N11·N12) 해설에 '(현장 검증 필요)' 표기 추가
+
+### 2026-08-20T13:32:18Z — hosungseo/korea100studio (main, reference)
 - 해체계획서 검토 사례집 보드(demolrev) 신설 — 5레인·6단계·19노드, 보드 35개로 확장
 - 요약문서 31번(건축물 해체계획서 검토 사례집) 추가, data/wf_docs.js·wf_tags.js 매핑 갱신
 - 연결선 거터 라우팅 도입(korea100studio 참조) — 레인·단계 사이 빈 통로로 후보 경로 생성 후 무관 카드 관통(nodePiercings) 0건 경로 자동 선택
